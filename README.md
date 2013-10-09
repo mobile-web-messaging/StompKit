@@ -32,7 +32,7 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
                     // callback when the client is connected successfully
 
                     // send a message
-                    client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
+                    [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
                     // and disconnect
                     [client disconnect];
                 }];
