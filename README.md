@@ -52,7 +52,7 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 
                 // subscribe to the destination
                 [client subscribeTo:@"/queue/myqueue"
-                            headers:@{@"selector": @"color = 'red'"
+                            headers:@{@"selector": @"color = 'red'"}
                             handler:^(STOMPMessage *message) {
                                 NSLog(@"got message %@", message.body);
                             }];
