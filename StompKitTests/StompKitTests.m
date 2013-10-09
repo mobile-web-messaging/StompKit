@@ -248,4 +248,32 @@
     XCTAssertFalse(gotSignal(messageReceived, 2));
 }
 
+- (void)testJSON
+{
+    dispatch_semaphore_t messageReceived = dispatch_semaphore_create(0);
+
+    NSDictionary *dict = @{@"foo": @"bar"};
+    __block NSString *receivedBody;
+
+    [self.client connectWithLogin:LOGIN
+                         passcode:PASSCODE
+                       completion:^(STOMPFrame *_) {
+                           [self.client subscribeTo:QUEUE_DEST
+                                            handler:^(STOMPMessage *message) {
+                                                receivedBody = message.body;
+                                                dispatch_semaphore_signal(messageReceived);
+                                            }];
+                           NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
+                           NSString *body =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                           [self.client sendTo:QUEUE_DEST body:body];
+                       }];
+
+    XCTAssertTrue(gotSignal(messageReceived, 2), @"did not receive signal");
+
+    NSDictionary *receivedDict = [NSJSONSerialization JSONObjectWithData:[receivedBody dataUsingEncoding:NSUTF8StringEncoding]
+                                    options:NSJSONReadingMutableContainers
+                                      error:nil];
+    XCTAssertTrue([receivedDict[@"foo"] isEqualToString:@"bar"]);
+}
+
 @end
