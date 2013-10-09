@@ -52,6 +52,8 @@
 @interface STOMPClient()
 
 @property (nonatomic, retain) GCDAsyncSocket *socket;
+@property (nonatomic, copy) NSString *host;
+@property (nonatomic) NSUInteger port;
 
 @property (copy) STOMPFrameHandler connectedHandler;
 @property (copy) void (^disconnectedHandler)(void);
@@ -221,7 +223,7 @@
 
 @implementation STOMPClient
 
-@synthesize socket;
+@synthesize socket, host, port;
 @synthesize connectedHandler, disconnectedHandler, receiptHandler;
 @synthesize subscriptions;
 
@@ -230,18 +232,15 @@ int idGenerator;
 #pragma mark -
 #pragma mark Public API
 
-- (id)initWithHost:(NSString *)host
-			  port:(NSUInteger)port {
-	if(self = [super init]) {
-		self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self
+- (id)initWithHost:(NSString *)aHost
+              port:(NSUInteger)aPort {
+    if(self = [super init]) {
+        self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self
                                                  delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        self.host = aHost;
+        self.port = aPort;
         idGenerator = 0;
-		self.subscriptions = [[NSMutableDictionary alloc] init];
-
-		NSError *err;
-		if(![self.socket connectToHost:host onPort:port error:&err]) {
-			LogDebug(@"StompService error: %@", err);
-		}
+        self.subscriptions = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -256,6 +255,12 @@ int idGenerator;
 - (void)connectWithHeaders:(NSDictionary *)headers
                 completion:(STOMPFrameHandler)aHandler {
     self.connectedHandler = aHandler;
+
+    NSError *err;
+    if(![self.socket connectToHost:host onPort:port error:&err]) {
+        LogDebug(@"StompService error: %@", err);
+    }
+
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
 
@@ -324,12 +329,13 @@ int idGenerator;
     [self disconnect: nil];
 }
 
-- (void)disconnect:(void (^)(void))aHandler{
+- (void)disconnect:(void (^)(void))aHandler {
     self.disconnectedHandler = aHandler;
-	[self sendFrameWithCommand:kCommandDisconnect
+    [self sendFrameWithCommand:kCommandDisconnect
                        headers:nil
                           body:nil];
-	[self.socket disconnectAfterReadingAndWriting];
+    [self.subscriptions removeAllObjects];
+    [self.socket disconnectAfterReadingAndWriting];
 }
 
 
