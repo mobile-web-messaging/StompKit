@@ -69,26 +69,22 @@
 
 @interface STOMPFrame()
 
-@property (nonatomic, retain) STOMPClient *client;
-
-- (id)initWithClient:(STOMPClient *)theClient
-             command:(NSString *)theCommand
-             headers: (NSDictionary *)theHeaders
+- (id)initWithCommand:(NSString *)theCommand
+              headers:(NSDictionary *)theHeaders
                 body:(NSString *)theBody;
+
+- (NSData *)toData;
 
 @end
 
 @implementation STOMPFrame
 
 @synthesize command, headers, body;
-@synthesize client;
 
-- (id)initWithClient:(STOMPClient *)theClient
-             command:(NSString *)theCommand
-             headers:(NSDictionary *)theHeaders
-                body:(NSString *)theBody {
+- (id)initWithCommand:(NSString *)theCommand
+              headers:(NSDictionary *)theHeaders
+                 body:(NSString *)theBody {
     if(self = [super init]) {
-        client = theClient;
         command = theCommand;
         headers = theHeaders;
         body = theBody;
@@ -96,27 +92,88 @@
     return self;
 }
 
+- (NSString *)toString {
+    NSMutableString *frame = [NSMutableString stringWithString: [command stringByAppendingString:kLineFeed]];
+	for (id key in headers) {
+        [frame appendString:[NSString stringWithFormat:@"%@%@%@%@", key, kHeaderSeparator, headers[key], kLineFeed]];
+	}
+    [frame appendString:kLineFeed];
+	if (body) {
+		[frame appendString:body];
+	}
+    [frame appendString:kNullChar];
+    return frame;
+}
+
+- (NSData *)toData {
+    return [[self toString] dataUsingEncoding:NSUTF8StringEncoding];
+}
+
++ (STOMPFrame *) STOMPFrameFromData:(NSData *)data {
+    NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length])];
+	NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
+    LogDebug(@"<<< %@", msg);
+    NSMutableArray *contents = (NSMutableArray *)[[msg componentsSeparatedByString:kLineFeed] mutableCopy];
+	if([[contents objectAtIndex:0] isEqual:@""]) {
+		[contents removeObjectAtIndex:0];
+	}
+	NSString *command = [[contents objectAtIndex:0] copy];
+	NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
+	NSMutableString *body = [[NSMutableString alloc] init];
+	BOOL hasHeaders = NO;
+    [contents removeObjectAtIndex:0];
+	for(NSString *line in contents) {
+		if(hasHeaders) {
+            for (int i=0; i < [line length]; i++) {
+                unichar c = [line characterAtIndex:i];
+                if (c != '\x00') {
+                    [body appendString:[NSString stringWithFormat:@"%c", c]];
+                }
+            }
+		} else {
+			if ([line isEqual:@""]) {
+				hasHeaders = YES;
+			} else {
+				NSMutableArray *parts = [NSMutableArray arrayWithArray:[line componentsSeparatedByString:kHeaderSeparator]];
+				// key ist the first part
+				NSString *key = parts[0];
+                [parts removeObjectAtIndex:0];
+                headers[key] = [parts componentsJoinedByString:kHeaderSeparator];
+			}
+		}
+	}
+    return [[STOMPFrame alloc] initWithCommand:command headers:headers body:body];
+}
+
+- (NSString *)description {
+    return [self toString];
+}
+
+
 @end
 
 #pragma mark STOMP Message
 
 @interface STOMPMessage()
 
-- (id)initWithClient:(STOMPClient *)theClient
-             headers: (NSDictionary *)theHeaders
-                body:(NSString *)theBody;
+@property (nonatomic, retain) STOMPClient *client;
+
++ (STOMPMessage *)STOMPMessageFromFrame:(STOMPFrame *)frame
+                                 client:(STOMPClient *)client;
 
 @end
 
 @implementation STOMPMessage
 
+@synthesize client;
+
 - (id)initWithClient:(STOMPClient *)theClient
              headers:(NSDictionary *)theHeaders
                 body:(NSString *)theBody {
-    if (self = [super initWithClient:theClient
-                             command:kCommandMessage
-                             headers:theHeaders
-                                body:theBody]) {
+    if (self = [super initWithCommand:kCommandMessage
+                              headers:theHeaders
+                                 body:theBody]) {
+        self.client = theClient;
     }
     return self;
 }
@@ -144,6 +201,11 @@
     [self.client sendFrameWithCommand:command
                               headers:ackHeaders
                                  body:nil];
+}
+
++ (STOMPMessage *)STOMPMessageFromFrame:(STOMPFrame *)frame
+                                 client:(STOMPClient *)client {
+    return [[STOMPMessage alloc] initWithClient:client headers:frame.headers body:frame.body];
 }
 
 @end
@@ -177,6 +239,10 @@
     [self.client sendFrameWithCommand:kCommandUnsubscribe
                               headers:@{kHeaderID: self.identifier}
                                  body:nil];
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<STOMPSubscription identifier:%@>", identifier];
 }
 
 @end
@@ -215,6 +281,10 @@
     [self.client sendFrameWithCommand:kCommandAbort
                               headers:@{kHeaderTransaction: self.identifier}
                                  body:nil];
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<STOMPTransaction identifier:%@>", identifier];
 }
 
 @end
@@ -341,54 +411,38 @@ int idGenerator;
 
 #pragma mark -
 #pragma mark Private Methods
+
 - (void)sendFrameWithCommand:(NSString *)command
                      headers:(NSDictionary *)headers
                         body:(NSString *)body {
-    NSMutableString *frame = [NSMutableString stringWithString: [command stringByAppendingString:kLineFeed]];
-	for (id key in headers) {
-        [frame appendString:[NSString stringWithFormat:@"%@%@%@%@", key, kHeaderSeparator, headers[key], kLineFeed]];
-	}
-    [frame appendString:kLineFeed];
-	if (body) {
-		[frame appendString:body];
-	}
-    [frame appendString:kNullChar];
-    LogDebug(@">>> %@", frame);
-    NSData *data = [frame dataUsingEncoding:NSUTF8StringEncoding];
+    STOMPFrame *frame = [[STOMPFrame alloc] initWithCommand:command headers:headers body:body];
+    NSData *data = [frame toData];
     [self.socket writeData:data withTimeout:kDefaultTimeout tag:123];
 }
 
-- (void)frameReceivedWithCommand:(NSString *)command
-                         headers:(NSDictionary *)headers
-                            body:(NSString *)body {
-    STOMPFrame *frame = [[STOMPFrame alloc] initWithClient:self
-                                                   command:command
-                                                   headers:headers
-                                                      body:body];
-
+- (void)receivedFrame:(STOMPFrame *)frame {
 	// CONNECTED
-	if([kCommandConnected isEqual:command]) {
+	if([kCommandConnected isEqual:frame.command]) {
         if (self.connectedHandler) {
             self.connectedHandler(frame);
         }
         // MESSAGE
-	} else if([kCommandMessage isEqual:command]) {
-        STOMPMessageHandler handler = self.subscriptions[headers[kHeaderSubscription]];
+	} else if([kCommandMessage isEqual:frame.command]) {
+        STOMPMessageHandler handler = self.subscriptions[frame.headers[kHeaderSubscription]];
         if (handler) {
-            STOMPMessage *message = [[STOMPMessage alloc] initWithClient:self
-                                                                 headers:headers
-                                                                    body:body];
+            STOMPMessage *message = [STOMPMessage STOMPMessageFromFrame:frame
+                                                                 client:self];
             handler(message);
         } else {
             //TODO default handler
         }
         // RECEIPT
-	} else if([kCommandReceipt isEqual:command]) {
+	} else if([kCommandReceipt isEqual:frame.command]) {
         if (self.receiptHandler) {
             self.receiptHandler(frame);
         }
         // ERROR
-	} else if([kCommandError isEqual:command]) {
+	} else if([kCommandError isEqual:frame.command]) {
         //TODO
 	} else {
         //TODO
@@ -405,40 +459,9 @@ int idGenerator;
 - (void)socket:(GCDAsyncSocket *)sock
    didReadData:(NSData *)data
        withTag:(long)tag {
-	NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length])];
-	NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
-    LogDebug(@"<<< %@", msg);
-    NSMutableArray *contents = (NSMutableArray *)[[msg componentsSeparatedByString:kLineFeed] mutableCopy];
-	if([[contents objectAtIndex:0] isEqual:@""]) {
-		[contents removeObjectAtIndex:0];
-	}
-	NSString *command = [[contents objectAtIndex:0] copy];
-	NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
-	NSMutableString *body = [[NSMutableString alloc] init];
-	BOOL hasHeaders = NO;
-    [contents removeObjectAtIndex:0];
-	for(NSString *line in contents) {
-		if(hasHeaders) {
-            for (int i=0; i < [line length]; i++) {
-                unichar c = [line characterAtIndex:i];
-                if (c != '\x00') {
-                    [body appendString:[NSString stringWithFormat:@"%c", c]];
-                }
-            }
-		} else {
-			if ([line isEqual:@""]) {
-				hasHeaders = YES;
-			} else {
-				NSMutableArray *parts = [NSMutableArray arrayWithArray:[line componentsSeparatedByString:kHeaderSeparator]];
-				// key ist the first part
-				NSString *key = parts[0];
-            	[parts removeObjectAtIndex:0];
-                headers[key] = [parts componentsJoinedByString:kHeaderSeparator];
-			}
-		}
-	}
-    [self frameReceivedWithCommand:command headers:headers body:body];
-	[self readFrame];
+    STOMPFrame *frame = [STOMPFrame STOMPFrameFromData:data];
+    [self receivedFrame:frame];
+    [self readFrame];
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
