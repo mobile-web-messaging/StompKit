@@ -45,7 +45,6 @@
 /* Begin PBXFileReference section */
 		932BA57818056C4B00A03257 /* libStompKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStompKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		932BA57B18056C4B00A03257 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		932BA57F18056C4B00A03257 /* StompKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StompKit-Prefix.pch"; sourceTree = "<group>"; };
 		932BA58018056C4B00A03257 /* StompKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StompKit.h; sourceTree = "<group>"; };
 		932BA58218056C4B00A03257 /* StompKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StompKit.m; sourceTree = "<group>"; };
 		932BA58818056C4C00A03257 /* StompKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StompKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,17 +121,8 @@
 				938827F0180577C6009A1164 /* GCDAsyncSocket.m */,
 				932BA58018056C4B00A03257 /* StompKit.h */,
 				932BA58218056C4B00A03257 /* StompKit.m */,
-				932BA57E18056C4B00A03257 /* Supporting Files */,
 			);
 			path = StompKit;
-			sourceTree = "<group>";
-		};
-		932BA57E18056C4B00A03257 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				932BA57F18056C4B00A03257 /* StompKit-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		932BA59118056C4C00A03257 /* StompKitTests */ = {
@@ -344,8 +334,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/StompKit.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -356,8 +344,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/StompKit.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -373,8 +359,6 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -394,8 +378,6 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
 				INFOPLIST_FILE = "StompKitTests/StompKitTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xctest;
