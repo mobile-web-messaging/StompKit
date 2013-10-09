@@ -1,0 +1,438 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		932BA57C18056C4B00A03257 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA57B18056C4B00A03257 /* Foundation.framework */; };
+		932BA58118056C4B00A03257 /* StompKit.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 932BA58018056C4B00A03257 /* StompKit.h */; };
+		932BA58318056C4B00A03257 /* StompKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 932BA58218056C4B00A03257 /* StompKit.m */; };
+		932BA58A18056C4C00A03257 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA58918056C4C00A03257 /* XCTest.framework */; };
+		932BA58B18056C4C00A03257 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA57B18056C4B00A03257 /* Foundation.framework */; };
+		932BA58D18056C4C00A03257 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA58C18056C4C00A03257 /* UIKit.framework */; };
+		932BA59018056C4C00A03257 /* libStompKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA57818056C4B00A03257 /* libStompKit.a */; };
+		932BA59618056C4C00A03257 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 932BA59418056C4C00A03257 /* InfoPlist.strings */; };
+		932BA59818056C4C00A03257 /* StompKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 932BA59718056C4C00A03257 /* StompKitTests.m */; };
+		938827F1180577C6009A1164 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 938827F0180577C6009A1164 /* GCDAsyncSocket.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		932BA58E18056C4C00A03257 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 932BA57018056C4B00A03257 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 932BA57718056C4B00A03257;
+			remoteInfo = StompKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		932BA57618056C4B00A03257 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				932BA58118056C4B00A03257 /* StompKit.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		932BA57818056C4B00A03257 /* libStompKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStompKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		932BA57B18056C4B00A03257 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		932BA57F18056C4B00A03257 /* StompKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StompKit-Prefix.pch"; sourceTree = "<group>"; };
+		932BA58018056C4B00A03257 /* StompKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StompKit.h; sourceTree = "<group>"; };
+		932BA58218056C4B00A03257 /* StompKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StompKit.m; sourceTree = "<group>"; };
+		932BA58818056C4C00A03257 /* StompKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StompKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		932BA58918056C4C00A03257 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		932BA58C18056C4C00A03257 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		932BA59318056C4C00A03257 /* StompKitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "StompKitTests-Info.plist"; sourceTree = "<group>"; };
+		932BA59518056C4C00A03257 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		932BA59718056C4C00A03257 /* StompKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StompKitTests.m; sourceTree = "<group>"; };
+		938827ED18056CA2009A1164 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		938827EE18056CA2009A1164 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		938827EF180577C6009A1164 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
+		938827F0180577C6009A1164 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
+		938827F218057877009A1164 /* StompKitTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StompKitTests.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		932BA57518056C4B00A03257 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				932BA57C18056C4B00A03257 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		932BA58518056C4C00A03257 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				932BA58A18056C4C00A03257 /* XCTest.framework in Frameworks */,
+				932BA58D18056C4C00A03257 /* UIKit.framework in Frameworks */,
+				932BA59018056C4C00A03257 /* libStompKit.a in Frameworks */,
+				932BA58B18056C4C00A03257 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		932BA56F18056C4B00A03257 = {
+			isa = PBXGroup;
+			children = (
+				938827ED18056CA2009A1164 /* LICENSE */,
+				938827EE18056CA2009A1164 /* README.md */,
+				932BA57D18056C4B00A03257 /* StompKit */,
+				932BA59118056C4C00A03257 /* StompKitTests */,
+				932BA57A18056C4B00A03257 /* Frameworks */,
+				932BA57918056C4B00A03257 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		932BA57918056C4B00A03257 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				932BA57818056C4B00A03257 /* libStompKit.a */,
+				932BA58818056C4C00A03257 /* StompKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		932BA57A18056C4B00A03257 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				932BA57B18056C4B00A03257 /* Foundation.framework */,
+				932BA58918056C4C00A03257 /* XCTest.framework */,
+				932BA58C18056C4C00A03257 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		932BA57D18056C4B00A03257 /* StompKit */ = {
+			isa = PBXGroup;
+			children = (
+				938827EF180577C6009A1164 /* GCDAsyncSocket.h */,
+				938827F0180577C6009A1164 /* GCDAsyncSocket.m */,
+				932BA58018056C4B00A03257 /* StompKit.h */,
+				932BA58218056C4B00A03257 /* StompKit.m */,
+				932BA57E18056C4B00A03257 /* Supporting Files */,
+			);
+			path = StompKit;
+			sourceTree = "<group>";
+		};
+		932BA57E18056C4B00A03257 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				932BA57F18056C4B00A03257 /* StompKit-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		932BA59118056C4C00A03257 /* StompKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				938827F218057877009A1164 /* StompKitTests.h */,
+				932BA59718056C4C00A03257 /* StompKitTests.m */,
+				932BA59218056C4C00A03257 /* Supporting Files */,
+			);
+			path = StompKitTests;
+			sourceTree = "<group>";
+		};
+		932BA59218056C4C00A03257 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				932BA59318056C4C00A03257 /* StompKitTests-Info.plist */,
+				932BA59418056C4C00A03257 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		932BA57718056C4B00A03257 /* StompKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 932BA59B18056C4C00A03257 /* Build configuration list for PBXNativeTarget "StompKit" */;
+			buildPhases = (
+				932BA57418056C4B00A03257 /* Sources */,
+				932BA57518056C4B00A03257 /* Frameworks */,
+				932BA57618056C4B00A03257 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StompKit;
+			productName = StompKit;
+			productReference = 932BA57818056C4B00A03257 /* libStompKit.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		932BA58718056C4C00A03257 /* StompKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 932BA59E18056C4C00A03257 /* Build configuration list for PBXNativeTarget "StompKitTests" */;
+			buildPhases = (
+				932BA58418056C4C00A03257 /* Sources */,
+				932BA58518056C4C00A03257 /* Frameworks */,
+				932BA58618056C4C00A03257 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				932BA58F18056C4C00A03257 /* PBXTargetDependency */,
+			);
+			name = StompKitTests;
+			productName = StompKitTests;
+			productReference = 932BA58818056C4C00A03257 /* StompKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		932BA57018056C4B00A03257 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Jeff Mesnil";
+			};
+			buildConfigurationList = 932BA57318056C4B00A03257 /* Build configuration list for PBXProject "StompKit" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 932BA56F18056C4B00A03257;
+			productRefGroup = 932BA57918056C4B00A03257 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				932BA57718056C4B00A03257 /* StompKit */,
+				932BA58718056C4C00A03257 /* StompKitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		932BA58618056C4C00A03257 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				932BA59618056C4C00A03257 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		932BA57418056C4B00A03257 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				938827F1180577C6009A1164 /* GCDAsyncSocket.m in Sources */,
+				932BA58318056C4B00A03257 /* StompKit.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		932BA58418056C4C00A03257 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				932BA59818056C4C00A03257 /* StompKitTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		932BA58F18056C4C00A03257 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 932BA57718056C4B00A03257 /* StompKit */;
+			targetProxy = 932BA58E18056C4C00A03257 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		932BA59418056C4C00A03257 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				932BA59518056C4C00A03257 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		932BA59918056C4C00A03257 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		932BA59A18056C4C00A03257 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		932BA59C18056C4C00A03257 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/StompKit.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		932BA59D18056C4C00A03257 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/StompKit.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		932BA59F18056C4C00A03257 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "StompKitTests/StompKitTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		932BA5A018056C4C00A03257 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "StompKit/StompKit-Prefix.pch";
+				INFOPLIST_FILE = "StompKitTests/StompKitTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		932BA57318056C4B00A03257 /* Build configuration list for PBXProject "StompKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				932BA59918056C4C00A03257 /* Debug */,
+				932BA59A18056C4C00A03257 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		932BA59B18056C4C00A03257 /* Build configuration list for PBXNativeTarget "StompKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				932BA59C18056C4C00A03257 /* Debug */,
+				932BA59D18056C4C00A03257 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		932BA59E18056C4C00A03257 /* Build configuration list for PBXNativeTarget "StompKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				932BA59F18056C4C00A03257 /* Debug */,
+				932BA5A018056C4C00A03257 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 932BA57018056C4B00A03257 /* Project object */;
+}
