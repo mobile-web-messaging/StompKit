@@ -36,6 +36,7 @@
 
 typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 typedef void (^STOMPFrameHandler)(STOMPFrame *frame);
+typedef void (^ErrorHandler)(NSError *error);
 
 #pragma mark STOMP Frame
 
@@ -90,9 +91,16 @@ typedef void (^STOMPFrameHandler)(STOMPFrame *frame);
 
 - (void)connectWithLogin:(NSString *)login
                 passcode:(NSString *)passcode
-              completion:(STOMPFrameHandler)handler;
+            onConnection:(STOMPFrameHandler)handler;
+- (void)connectWithLogin:(NSString *)login
+                passcode:(NSString *)passcode
+            onConnection:(STOMPFrameHandler)handler
+                 onError:(ErrorHandler)errorHandler;
 - (void)connectWithHeaders:(NSDictionary *)headers
-                completion:(STOMPFrameHandler)handler;
+              onConnection:(STOMPFrameHandler)handler;
+- (void)connectWithHeaders:(NSDictionary *)headers
+              onConnection:(STOMPFrameHandler)handler
+                   onError:(ErrorHandler)errorHandler;
 
 - (void)sendTo:(NSString *)destination
           body:(NSString *)body;
@@ -101,10 +109,10 @@ typedef void (^STOMPFrameHandler)(STOMPFrame *frame);
           body:(NSString *)body;
 
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
-                           handler:(STOMPMessageHandler)handler;
+                         onMessage:(STOMPMessageHandler)handler;
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
                            headers:(NSDictionary *)headers
-                           handler:(STOMPMessageHandler)handler;
+                         onMessage:(STOMPMessageHandler)handler;
 
 - (STOMPTransaction *)begin;
 - (STOMPTransaction *)begin:(NSString *)identifier;

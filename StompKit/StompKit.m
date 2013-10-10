@@ -55,8 +55,9 @@
 @property (nonatomic, copy) NSString *host;
 @property (nonatomic) NSUInteger port;
 
-@property (copy) STOMPFrameHandler connectedHandler;
-@property (copy) void (^disconnectedHandler)(void);
+@property (nonatomic, copy) STOMPFrameHandler connectedHandler;
+@property (nonatomic, copy) void (^disconnectedHandler)(void);
+@property (nonatomic, copy) ErrorHandler errorHandler;
 @property (nonatomic, retain) NSMutableDictionary *subscriptions;
 
 - (void) sendFrameWithCommand:(NSString *)command
@@ -294,7 +295,7 @@
 @implementation STOMPClient
 
 @synthesize socket, host, port;
-@synthesize connectedHandler, disconnectedHandler, receiptHandler;
+@synthesize connectedHandler, disconnectedHandler, receiptHandler, errorHandler;
 @synthesize subscriptions;
 
 int idGenerator;
@@ -317,18 +318,38 @@ int idGenerator;
 
 - (void)connectWithLogin:(NSString *)aLogin
                 passcode:(NSString *)aPasscode
-              completion:(STOMPFrameHandler)aHandler {
+            onConnection:(STOMPFrameHandler)aHandler {
+    [self connectWithLogin:aLogin
+                  passcode:aPasscode
+              onConnection:aHandler
+                   onError:nil];
+}
+
+- (void)connectWithLogin:(NSString *)aLogin
+                passcode:(NSString *)aPasscode
+            onConnection:(STOMPFrameHandler)aHandler
+                 onError:(ErrorHandler)anErrorHandler {
     [self connectWithHeaders:@{kHeaderLogin: aLogin, kHeaderPasscode: aPasscode}
-                  completion:aHandler];
+                onConnection:aHandler
+                     onError:anErrorHandler];
 }
 
 - (void)connectWithHeaders:(NSDictionary *)headers
-                completion:(STOMPFrameHandler)aHandler {
+              onConnection:(STOMPFrameHandler)handler {
+    [self connectWithHeaders:headers
+                onConnection:handler
+                     onError:nil];
+}
+
+- (void)connectWithHeaders:(NSDictionary *)headers
+              onConnection:(STOMPFrameHandler)aHandler
+                   onError:(ErrorHandler)anErrorHandler {
     self.connectedHandler = aHandler;
+    self.errorHandler = anErrorHandler;
 
     NSError *err;
     if(![self.socket connectToHost:host onPort:port error:&err]) {
-        LogDebug(@"StompService error: %@", err);
+        self.errorHandler(err);
     }
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
@@ -360,15 +381,15 @@ int idGenerator;
 }
 
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
-                           handler:(STOMPMessageHandler)aHandler {
+                         onMessage:(STOMPMessageHandler)aHandler {
     return [self subscribeTo:destination
                      headers:nil
-                     handler:aHandler];
+                   onMessage:aHandler];
 }
 
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
                            headers:(NSDictionary *)headers
-                           handler:(STOMPMessageHandler)aHandler {
+                         onMessage:(STOMPMessageHandler)aHandler {
 	NSMutableDictionary *subHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     subHeaders[kHeaderDestination] = destination;
     NSString *identifier = subHeaders[kHeaderID];
@@ -443,9 +464,17 @@ int idGenerator;
         }
         // ERROR
 	} else if([kCommandError isEqual:frame.command]) {
-        //TODO
+        NSError *error = [[NSError alloc] initWithDomain:@"StompKit" code:1 userInfo:@{@"frame": frame}];
+        if (self.errorHandler) {
+            self.errorHandler(error);
+        }
 	} else {
-        //TODO
+        NSError *error = [[NSError alloc] initWithDomain:@"StompKit"
+                                                    code:2
+                                                userInfo:@{@"message": [NSString stringWithFormat:@"Unknown frame %@", frame.command]}];
+        if (self.errorHandler) {
+            self.errorHandler(error);
+        }
     }
 }
 
@@ -470,8 +499,8 @@ int idGenerator;
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock
                   withError:(NSError *)err {
-    if (err) {
-        //TODO
+    if (err && self.errorHandler) {
+            self.errorHandler(err);
     } else {
         if (self.disconnectedHandler) {
             self.disconnectedHandler();

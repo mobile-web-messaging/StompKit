@@ -28,14 +28,14 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 // connect to the broker
 [client connectWithLogin:@"mylogin"
                 passcode:@"mypassword"
-              completion:^(STOMPFrame *_) {
-                    // callback when the client is connected successfully
+            onConnection:^(STOMPFrame *_) {
+                // callback when the client is connected successfully
 
-                    // send a message
-                    [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
-                    // and disconnect
-                    [client disconnect];
-                }];
+                // send a message
+                [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
+                // and disconnect
+                [client disconnect];
+            }];
 ```
 
 Subscribe to receive message:
@@ -47,15 +47,15 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 // connect to the broker
 [client connectWithLogin:@"mylogin"
                 passcode:@"mypassword"
-              completion:^(STOMPFrame *_) {
+            onConnection:^(STOMPFrame *_) {
                 // callback when the client is connected successfully
 
                 // subscribe to the destination
                 [client subscribeTo:@"/queue/myqueue"
                             headers:@{@"selector": @"color = 'red'"}
-                            handler:^(STOMPMessage *message) {
+                          onMessage:^(STOMPMessage *message) {
                                 NSLog(@"got message %@", message.body);
-                            }];
+                          }];
                }];
 ```
 

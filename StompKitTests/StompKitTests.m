@@ -39,15 +39,48 @@
     [super tearDown];
 }
 
+- (void)testInvalidServerInfo {
+
+    dispatch_semaphore_t errorReceived = dispatch_semaphore_create(0);
+    __block NSError *connectionError;
+
+    STOMPClient *otherClient = [[STOMPClient alloc] initWithHost:@"invalid host" port:61613];
+    [otherClient connectWithLogin:LOGIN
+                         passcode:PASSCODE
+                     onConnection:nil
+                          onError:^(NSError *error) {
+                              connectionError = error;
+                              dispatch_semaphore_signal(errorReceived);
+                          }];
+    XCTAssertTrue(gotSignal(errorReceived, 2));
+    NSLog(@"got errror: %@", connectionError);
+}
+
 - (void)testConnect {
     dispatch_semaphore_t connected = dispatch_semaphore_create(0);
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *_) {
-                           dispatch_semaphore_signal(connected);
-                       }];
+                     onConnection:^(STOMPFrame *_) {
+                         dispatch_semaphore_signal(connected);
+                     }];
     XCTAssertTrue(gotSignal(connected, 2), @"can not connect to %@:%d with credentials %@ / %@", HOST, PORT, LOGIN, PASSCODE);
+}
+
+- (void)testConnectWithError {
+    dispatch_semaphore_t errorReceived = dispatch_semaphore_create(0);
+    __block NSError *connectionError;
+
+    [self.client connectWithLogin:@"not a valid login"
+                         passcode:PASSCODE
+                     onConnection:nil
+                          onError:^(NSError *error) {
+                              connectionError = error;
+                              dispatch_semaphore_signal(errorReceived);
+                          }];
+
+    XCTAssertTrue(gotSignal(errorReceived, 2));
+    NSLog(@"got error: %@", connectionError);
 }
 
 - (void)testDisconnect
@@ -56,8 +89,7 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *_) {
-
+                     onConnection:^(STOMPFrame *_) {
                            [self.client disconnect:^{
                                dispatch_semaphore_signal(disconnected);
                            }];
@@ -75,12 +107,12 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *_) {
+                     onConnection:^(STOMPFrame *_) {
                            [self.client subscribeTo:QUEUE_DEST
-                                            handler:^(STOMPMessage *message) {
-                                                reply = message.body;
-                                                dispatch_semaphore_signal(messageReceived);
-                                            }];
+                                          onMessage:^(STOMPMessage *message) {
+                                              reply = message.body;
+                                              dispatch_semaphore_signal(messageReceived);
+                                          }];
                            [self.client sendTo:QUEUE_DEST
                                           body:msg];
                        }];
@@ -102,13 +134,13 @@
     };
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *_) {
-                           [self.client subscribeTo:QUEUE_DEST handler:handler1];
-                           [self.client subscribeTo:QUEUE_DEST_2 handler:handler2];
+                     onConnection:^(STOMPFrame *_) {
+                         [self.client subscribeTo:QUEUE_DEST onMessage:handler1];
+                         [self.client subscribeTo:QUEUE_DEST_2 onMessage:handler2];
 
-                           [self.client sendTo:QUEUE_DEST body:@"testMultipleSubscription #1"];
-                           [self.client sendTo:QUEUE_DEST_2 body:@"testMultipleSubscription #2"];
-                       }];
+                         [self.client sendTo:QUEUE_DEST body:@"testMultipleSubscription #1"];
+                         [self.client sendTo:QUEUE_DEST_2 body:@"testMultipleSubscription #2"];
+                     }];
 
     XCTAssertTrue(gotSignal(messageReceivedFromSub1, 2), @"did not receive signal");
     XCTAssertTrue(gotSignal(messageReceivedFromSub2, 2), @"did not receive signal");
@@ -123,13 +155,13 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *frame) {
-                           subscription = [self.client subscribeTo:QUEUE_DEST
-                                                           handler:^(STOMPMessage *message) {
-                                                               dispatch_semaphore_signal(messageReceived);
-                                                           }];
-                           dispatch_semaphore_signal(subscribed);
-                       }];
+                     onConnection:^(STOMPFrame *frame) {
+                         subscription = [self.client subscribeTo:QUEUE_DEST
+                                                       onMessage:^(STOMPMessage *message) {
+                                                           dispatch_semaphore_signal(messageReceived);
+                                                       }];
+                         dispatch_semaphore_signal(subscribed);
+                     }];
 
     XCTAssertTrue(gotSignal(subscribed, 2));
 
@@ -140,7 +172,7 @@
     XCTAssertFalse(gotSignal(messageReceived, 2));
 
     // resubscribe to consume the message and leave the queue empty:
-    [self.client subscribeTo:QUEUE_DEST handler:^(STOMPMessage *message) {
+    [self.client subscribeTo:QUEUE_DEST onMessage:^(STOMPMessage *message) {
         dispatch_semaphore_signal(messageReceived);
     }];
 
@@ -160,14 +192,14 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *frame) {
-                           [self.client subscribeTo:QUEUE_DEST
-                                            headers: @{kHeaderAck:kAckClient}
-                                            handler:^(STOMPMessage *message) {
-                                                [message ack:@{kHeaderReceipt: receiptID}];
-                                            }];
-                           [self.client sendTo:QUEUE_DEST body:@"testAck"];
-                       }];
+                     onConnection:^(STOMPFrame *frame) {
+                        [self.client subscribeTo:QUEUE_DEST
+                                         headers: @{kHeaderAck:kAckClient}
+                                       onMessage:^(STOMPMessage *message) {
+                                           [message ack:@{kHeaderReceipt: receiptID}];
+                                       }];
+                         [self.client sendTo:QUEUE_DEST body:@"testAck"];
+                     }];
 
     XCTAssertTrue(gotSignal(receiptForAckReceived, 2));
 }
@@ -184,14 +216,14 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *frame) {
-                           [self.client subscribeTo:QUEUE_DEST
-                                            headers: @{kHeaderAck: kAckClient}
-                                            handler:^(STOMPMessage *message) {
+                     onConnection:^(STOMPFrame *frame) {
+                         [self.client subscribeTo:QUEUE_DEST
+                                          headers: @{kHeaderAck: kAckClient}
+                                            onMessage:^(STOMPMessage *message) {
                                                 [message nack:@{kHeaderReceipt: receiptID}];
                                             }];
-                           [self.client sendTo:QUEUE_DEST body:@"testNack"];
-                       }];
+                         [self.client sendTo:QUEUE_DEST body:@"testNack"];
+                     }];
 
     XCTAssertTrue(gotSignal(receiptForNackReceived, 2));
 }
@@ -203,15 +235,15 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *frame) {
-                           [self.client subscribeTo:QUEUE_DEST
-                                            handler:^(STOMPMessage *message) {
-                                                dispatch_semaphore_signal(messageReceived);
-                                            }];
-                           transaction = [self.client begin];
-                           [self.client sendTo:QUEUE_DEST
-                                       headers:@{kHeaderTransaction: transaction.identifier}
-                                          body:@"in a transaction"];
+                     onConnection:^(STOMPFrame *frame) {
+                         [self.client subscribeTo:QUEUE_DEST
+                                        onMessage:^(STOMPMessage *message) {
+                                            dispatch_semaphore_signal(messageReceived);
+                                        }];
+                         transaction = [self.client begin];
+                        [self.client sendTo:QUEUE_DEST
+                                    headers:@{kHeaderTransaction: transaction.identifier}
+                                       body:@"in a transaction"];
                        }];
 
     XCTAssertFalse(gotSignal(messageReceived, 1));
@@ -229,17 +261,17 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *frame) {
-                           [self.client subscribeTo:QUEUE_DEST
-                                            handler:^(STOMPMessage *message) {
-                                                dispatch_semaphore_signal(messageReceived);
-                                            }];
-                           transaction = [self.client begin];
-                           [self.client sendTo:QUEUE_DEST
-                                       headers:@{kHeaderTransaction: transaction.identifier}
-                                          body:@"in a transaction"];
-                           dispatch_semaphore_signal(messageSent);
-                       }];
+                     onConnection:^(STOMPFrame *frame) {
+                         [self.client subscribeTo:QUEUE_DEST
+                                        onMessage:^(STOMPMessage *message) {
+                                            dispatch_semaphore_signal(messageReceived);
+                                        }];
+                         transaction = [self.client begin];
+                         [self.client sendTo:QUEUE_DEST
+                                     headers:@{kHeaderTransaction: transaction.identifier}
+                                        body:@"in a transaction"];
+                         dispatch_semaphore_signal(messageSent);
+                     }];
 
     XCTAssertTrue(gotSignal(messageSent, 2));
 
@@ -257,16 +289,16 @@
 
     [self.client connectWithLogin:LOGIN
                          passcode:PASSCODE
-                       completion:^(STOMPFrame *_) {
-                           [self.client subscribeTo:QUEUE_DEST
-                                            handler:^(STOMPMessage *message) {
-                                                receivedBody = message.body;
-                                                dispatch_semaphore_signal(messageReceived);
-                                            }];
-                           NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
-                           NSString *body =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                           [self.client sendTo:QUEUE_DEST body:body];
-                       }];
+                     onConnection:^(STOMPFrame *frame) {
+                         [self.client subscribeTo:QUEUE_DEST
+                                        onMessage:^(STOMPMessage *message) {
+                                            receivedBody = message.body;
+                                            dispatch_semaphore_signal(messageReceived);
+                                        }];
+                         NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
+                         NSString *body =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                         [self.client sendTo:QUEUE_DEST body:body];
+                     }];
 
     XCTAssertTrue(gotSignal(messageReceived, 2), @"did not receive signal");
 
