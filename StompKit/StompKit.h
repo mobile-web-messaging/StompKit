@@ -34,8 +34,8 @@
 @class STOMPFrame;
 @class STOMPMessage;
 
-typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 typedef void (^STOMPFrameHandler)(STOMPFrame *frame);
+typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 typedef void (^ErrorHandler)(NSError *error);
 
 #pragma mark STOMP Frame
@@ -85,22 +85,16 @@ typedef void (^ErrorHandler)(NSError *error);
 @interface STOMPClient : NSObject
 
 @property (nonatomic, copy) STOMPFrameHandler receiptHandler;
+@property (nonatomic, copy) ErrorHandler errorHandler;
 
 - (id)initWithHost:(NSString *)theHost
 			  port:(NSUInteger)thePort;
 
 - (void)connectWithLogin:(NSString *)login
                 passcode:(NSString *)passcode
-            onConnection:(STOMPFrameHandler)handler;
-- (void)connectWithLogin:(NSString *)login
-                passcode:(NSString *)passcode
-            onConnection:(STOMPFrameHandler)handler
-                 onError:(ErrorHandler)errorHandler;
+       completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler;
 - (void)connectWithHeaders:(NSDictionary *)headers
-              onConnection:(STOMPFrameHandler)handler;
-- (void)connectWithHeaders:(NSDictionary *)headers
-              onConnection:(STOMPFrameHandler)handler
-                   onError:(ErrorHandler)errorHandler;
+         completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler;
 
 - (void)sendTo:(NSString *)destination
           body:(NSString *)body;
@@ -109,15 +103,15 @@ typedef void (^ErrorHandler)(NSError *error);
           body:(NSString *)body;
 
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
-                         onMessage:(STOMPMessageHandler)handler;
+                    messageHandler:(STOMPMessageHandler)handler;
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
                            headers:(NSDictionary *)headers
-                         onMessage:(STOMPMessageHandler)handler;
+                    messageHandler:(STOMPMessageHandler)handler;
 
 - (STOMPTransaction *)begin;
 - (STOMPTransaction *)begin:(NSString *)identifier;
 
 - (void)disconnect;
-- (void)disconnect:(void (^)(void))handler;
+- (void)disconnect:(void (^)(NSError *error))completionHandler;
 
 @end
