@@ -10,6 +10,7 @@
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
+#define kNoHeartBeat @"0,0"
 
 #pragma mark Logging macros
 
@@ -55,9 +56,8 @@
 @property (nonatomic, copy) NSString *host;
 @property (nonatomic) NSUInteger port;
 
-@property (nonatomic, copy) STOMPFrameHandler connectedHandler;
-@property (nonatomic, copy) void (^disconnectedHandler)(void);
-@property (nonatomic, copy) ErrorHandler errorHandler;
+@property (nonatomic, copy) void (^disconnectedHandler)(NSError *error);
+@property (nonatomic, copy) void (^connectionCompletionHandler)(STOMPFrame *connectedFrame, NSError *error);
 @property (nonatomic, retain) NSMutableDictionary *subscriptions;
 
 - (void) sendFrameWithCommand:(NSString *)command
@@ -94,13 +94,13 @@
 }
 
 - (NSString *)toString {
-    NSMutableString *frame = [NSMutableString stringWithString: [command stringByAppendingString:kLineFeed]];
-	for (id key in headers) {
-        [frame appendString:[NSString stringWithFormat:@"%@%@%@%@", key, kHeaderSeparator, headers[key], kLineFeed]];
+    NSMutableString *frame = [NSMutableString stringWithString: [self.command stringByAppendingString:kLineFeed]];
+	for (id key in self.headers) {
+        [frame appendString:[NSString stringWithFormat:@"%@%@%@%@", key, kHeaderSeparator, self.headers[key], kLineFeed]];
 	}
     [frame appendString:kLineFeed];
-	if (body) {
-		[frame appendString:body];
+	if (self.body) {
+		[frame appendString:self.body];
 	}
     [frame appendString:kNullChar];
     return frame;
@@ -295,9 +295,10 @@
 @implementation STOMPClient
 
 @synthesize socket, host, port;
-@synthesize connectedHandler, disconnectedHandler, receiptHandler, errorHandler;
+@synthesize connectionCompletionHandler, disconnectedHandler, receiptHandler, errorHandler;
 @synthesize subscriptions;
 
+BOOL connected;
 int idGenerator;
 
 #pragma mark -
@@ -311,49 +312,33 @@ int idGenerator;
         self.host = aHost;
         self.port = aPort;
         idGenerator = 0;
+        connected = NO;
         self.subscriptions = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
 
-- (void)connectWithLogin:(NSString *)aLogin
-                passcode:(NSString *)aPasscode
-            onConnection:(STOMPFrameHandler)aHandler {
-    [self connectWithLogin:aLogin
-                  passcode:aPasscode
-              onConnection:aHandler
-                   onError:nil];
-}
-
-- (void)connectWithLogin:(NSString *)aLogin
-                passcode:(NSString *)aPasscode
-            onConnection:(STOMPFrameHandler)aHandler
-                 onError:(ErrorHandler)anErrorHandler {
-    [self connectWithHeaders:@{kHeaderLogin: aLogin, kHeaderPasscode: aPasscode}
-                onConnection:aHandler
-                     onError:anErrorHandler];
+- (void)connectWithLogin:(NSString *)login
+                passcode:(NSString *)passcode
+       completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
+    [self connectWithHeaders:@{kHeaderLogin: login, kHeaderPasscode: passcode}
+           completionHandler:completionHandler];
 }
 
 - (void)connectWithHeaders:(NSDictionary *)headers
-              onConnection:(STOMPFrameHandler)handler {
-    [self connectWithHeaders:headers
-                onConnection:handler
-                     onError:nil];
-}
-
-- (void)connectWithHeaders:(NSDictionary *)headers
-              onConnection:(STOMPFrameHandler)aHandler
-                   onError:(ErrorHandler)anErrorHandler {
-    self.connectedHandler = aHandler;
-    self.errorHandler = anErrorHandler;
+         completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
+    self.connectionCompletionHandler = completionHandler;
 
     NSError *err;
     if(![self.socket connectToHost:host onPort:port error:&err]) {
-        self.errorHandler(err);
+        if (self.connectionCompletionHandler) {
+            self.connectionCompletionHandler(nil, err);
+        }
     }
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+    connectHeaders[kHeaderHeartBeat] = kNoHeartBeat;
 
     [self sendFrameWithCommand:kCommandConnect
                        headers:connectHeaders
@@ -381,15 +366,15 @@ int idGenerator;
 }
 
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
-                         onMessage:(STOMPMessageHandler)aHandler {
+                    messageHandler:(STOMPMessageHandler)handler {
     return [self subscribeTo:destination
                      headers:nil
-                   onMessage:aHandler];
+              messageHandler:handler];
 }
 
 - (STOMPSubscription *)subscribeTo:(NSString *)destination
                            headers:(NSDictionary *)headers
-                         onMessage:(STOMPMessageHandler)aHandler {
+                    messageHandler:(STOMPMessageHandler)handler {
 	NSMutableDictionary *subHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     subHeaders[kHeaderDestination] = destination;
     NSString *identifier = subHeaders[kHeaderID];
@@ -397,7 +382,7 @@ int idGenerator;
         identifier = [NSString stringWithFormat:@"sub-%d", idGenerator++];
         subHeaders[kHeaderID] = identifier;
     }
-    self.subscriptions[identifier] = aHandler;
+    self.subscriptions[identifier] = handler;
     [self sendFrameWithCommand:kCommandSubscribe
                        headers:subHeaders
                           body:nil];
@@ -420,8 +405,8 @@ int idGenerator;
     [self disconnect: nil];
 }
 
-- (void)disconnect:(void (^)(void))aHandler {
-    self.disconnectedHandler = aHandler;
+- (void)disconnect:(void (^)(NSError *error))completionHandler {
+    self.disconnectedHandler = completionHandler;
     [self sendFrameWithCommand:kCommandDisconnect
                        headers:nil
                           body:nil];
@@ -444,10 +429,11 @@ int idGenerator;
 - (void)receivedFrame:(STOMPFrame *)frame {
 	// CONNECTED
 	if([kCommandConnected isEqual:frame.command]) {
-        if (self.connectedHandler) {
-            self.connectedHandler(frame);
+        connected = YES;
+        if (self.connectionCompletionHandler) {
+            self.connectionCompletionHandler(frame, nil);
         }
-        // MESSAGE
+    // MESSAGE
 	} else if([kCommandMessage isEqual:frame.command]) {
         STOMPMessageHandler handler = self.subscriptions[frame.headers[kHeaderSubscription]];
         if (handler) {
@@ -465,8 +451,8 @@ int idGenerator;
         // ERROR
 	} else if([kCommandError isEqual:frame.command]) {
         NSError *error = [[NSError alloc] initWithDomain:@"StompKit" code:1 userInfo:@{@"frame": frame}];
-        if (self.errorHandler) {
-            self.errorHandler(error);
+        if (self.connectionCompletionHandler) {
+            self.connectionCompletionHandler(frame, error);
         }
 	} else {
         NSError *error = [[NSError alloc] initWithDomain:@"StompKit"
@@ -499,13 +485,12 @@ int idGenerator;
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock
                   withError:(NSError *)err {
-    if (err && self.errorHandler) {
-            self.errorHandler(err);
-    } else {
-        if (self.disconnectedHandler) {
-            self.disconnectedHandler();
-        }
+    if (!connected && self.connectionCompletionHandler) {
+        self.connectionCompletionHandler(nil, err);
+    } else if (connected && self.disconnectedHandler) {
+        self.disconnectedHandler(err);
     }
+    connected = NO;
 }
 
 @end

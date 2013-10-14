@@ -28,14 +28,17 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 // connect to the broker
 [client connectWithLogin:@"mylogin"
                 passcode:@"mypassword"
-            onConnection:^(STOMPFrame *_) {
-                // callback when the client is connected successfully
+       completionHandler:^(STOMPFrame *_, NSError *error) {
+            if (err) {
+                NSLog(@"%@", error);
+                return;
+            }
 
-                // send a message
-                [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
-                // and disconnect
-                [client disconnect];
-            }];
+            // send a message
+            [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
+            // and disconnect
+            [client disconnect];
+        }];
 ```
 
 Subscribe to receive message:
@@ -47,19 +50,22 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 // connect to the broker
 [client connectWithLogin:@"mylogin"
                 passcode:@"mypassword"
-            onConnection:^(STOMPFrame *_) {
-                // callback when the client is connected successfully
+       completionHandler:^(STOMPFrame *_, NSError *error) {
+            if (err) {
+                NSLog(@"%@", error);
+                return;
+            }
 
-                // subscribe to the destination
-                [client subscribeTo:@"/queue/myqueue"
-                            headers:@{@"selector": @"color = 'red'"}
-                          onMessage:^(STOMPMessage *message) {
-                                // callback when the client receive a message
-                                // for the /queue/myqueue destination
+            // subscribe to the destination
+            [client subscribeTo:@"/queue/myqueue"
+                        headers:@{@"selector": @"color = 'red'"}
+                 messageHandler:^(STOMPMessage *message) {
+                    // callback when the client receive a message
+                    // for the /queue/myqueue destination
 
-                                NSLog(@"got message %@", message.body); // => "Hello, iOS"
-                          }];
-               }];
+                    NSLog(@"got message %@", message.body); // => "Hello, iOS"
+                }];
+            }];
 ```
 
 
