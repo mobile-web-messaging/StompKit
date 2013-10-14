@@ -14,6 +14,7 @@
 #define kHeaderAcceptVersion @"accept-version"
 #define kHeaderAck           @"ack"
 #define kHeaderContentLength @"content-length"
+#define kHeaderHeartBeat     @"heart-beat"
 #define kHeaderDestination   @"destination"
 #define kHeaderID            @"id"
 #define kHeaderLogin         @"login"

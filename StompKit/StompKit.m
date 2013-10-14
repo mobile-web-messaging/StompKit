@@ -10,6 +10,7 @@
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
+#define kNoHeartBeat @"0,0"
 
 #pragma mark Logging macros
 
@@ -93,13 +94,13 @@
 }
 
 - (NSString *)toString {
-    NSMutableString *frame = [NSMutableString stringWithString: [command stringByAppendingString:kLineFeed]];
-	for (id key in headers) {
-        [frame appendString:[NSString stringWithFormat:@"%@%@%@%@", key, kHeaderSeparator, headers[key], kLineFeed]];
+    NSMutableString *frame = [NSMutableString stringWithString: [self.command stringByAppendingString:kLineFeed]];
+	for (id key in self.headers) {
+        [frame appendString:[NSString stringWithFormat:@"%@%@%@%@", key, kHeaderSeparator, self.headers[key], kLineFeed]];
 	}
     [frame appendString:kLineFeed];
-	if (body) {
-		[frame appendString:body];
+	if (self.body) {
+		[frame appendString:self.body];
 	}
     [frame appendString:kNullChar];
     return frame;
@@ -337,6 +338,7 @@ int idGenerator;
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+    connectHeaders[kHeaderHeartBeat] = kNoHeartBeat;
 
     [self sendFrameWithCommand:kCommandConnect
                        headers:connectHeaders
