@@ -22,6 +22,8 @@ On your ```Podfile``` add this project:
 ...
 ```
 
+For the first time, run ```pod install```, if you are updating the project invoke ```pod update```.
+
 # Usage
 
 Import the `StompKit.h` header file
