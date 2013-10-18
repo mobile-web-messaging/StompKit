@@ -9,7 +9,18 @@ This library uses the Grand Central Dispatch version of [CocoaAsyncSocket](https
 
 # Installation
 
+## Manual Installation
 Add GCDAsynSocket.{h,m} and StompKit.{h,m} to your project.
+
+## Using CocoaPods
+
+On your ```Podfile``` add this project:
+
+```
+...
+-pod 'StompKit', :git => 'https://github.com/mobile-web-messaging/StompKit.git'
+...
+```
 
 # Usage
 
