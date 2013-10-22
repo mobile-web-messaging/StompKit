@@ -42,19 +42,17 @@
 - (void)testInvalidServerInfo {
 
     dispatch_semaphore_t errorReceived = dispatch_semaphore_create(0);
-    __block NSError *connectionError;
 
     STOMPClient *otherClient = [[STOMPClient alloc] initWithHost:@"invalid host" port:61613];
     [otherClient connectWithLogin:LOGIN
                          passcode:PASSCODE
                 completionHandler:^(STOMPFrame *connectedFrame, NSError *error) {
                     if (error) {
-                        connectionError = error;
+                        NSLog(@"got error: %@", error);
                         dispatch_semaphore_signal(errorReceived);
                     }
                 }];
     XCTAssertTrue(gotSignal(errorReceived, 2));
-    NSLog(@"got errror: %@", connectionError);
 }
 
 - (void)testConnect {
