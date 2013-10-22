@@ -37,7 +37,6 @@
 
 typedef void (^STOMPFrameHandler)(STOMPFrame *frame);
 typedef void (^STOMPMessageHandler)(STOMPMessage *message);
-typedef void (^ErrorHandler)(NSError *error);
 
 #pragma mark STOMP Frame
 
@@ -86,7 +85,7 @@ typedef void (^ErrorHandler)(NSError *error);
 @interface STOMPClient : NSObject
 
 @property (nonatomic, copy) STOMPFrameHandler receiptHandler;
-@property (nonatomic, copy) ErrorHandler errorHandler;
+@property (nonatomic, copy) void (^errorHandler)(NSError *error);
 
 - (id)initWithHost:(NSString *)theHost
 			  port:(NSUInteger)thePort;
