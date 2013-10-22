@@ -72,18 +72,16 @@
 
 - (void)testConnectWithError {
     dispatch_semaphore_t errorReceived = dispatch_semaphore_create(0);
-    __block NSError *connectionError;
 
     [self.client connectWithLogin:@"not a valid login"
                          passcode:PASSCODE
                 completionHandler:^(STOMPFrame *connectedFrame, NSError *error) {
                     if (error) {
-                        connectionError = error;
+                        NSLog(@"got error: %@", error);
                         dispatch_semaphore_signal(errorReceived);
                     }
                 }];
     XCTAssertTrue(gotSignal(errorReceived, 2));
-    NSLog(@"got error: %@", connectionError);
 }
 
 - (void)testDisconnect

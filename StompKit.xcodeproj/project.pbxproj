@@ -47,6 +47,8 @@
 		37A4F2569A574CA6A0704DA6 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		44F558268B504F65BBF4384B /* Pods-StompKitTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StompKitTests.xcconfig"; path = "Pods/Pods-StompKitTests.xcconfig"; sourceTree = "<group>"; };
 		591868DBFE214F55AB478DA7 /* libPods-StompKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StompKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9320F3901816698700FF599F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		9320F3911816698700FF599F /* StompKit.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StompKit.podspec; sourceTree = "<group>"; };
 		932BA57818056C4B00A03257 /* libStompKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStompKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		932BA57B18056C4B00A03257 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		932BA58018056C4B00A03257 /* StompKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StompKit.h; sourceTree = "<group>"; };
@@ -91,6 +93,8 @@
 		932BA56F18056C4B00A03257 = {
 			isa = PBXGroup;
 			children = (
+				9320F3901816698700FF599F /* Podfile */,
+				9320F3911816698700FF599F /* StompKit.podspec */,
 				938827ED18056CA2009A1164 /* LICENSE */,
 				938827EE18056CA2009A1164 /* README.md */,
 				932BA57D18056C4B00A03257 /* StompKit */,
