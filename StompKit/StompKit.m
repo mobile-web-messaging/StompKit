@@ -338,6 +338,7 @@ int idGenerator;
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+    connectHeaders[kHeaderHost] = host;
     connectHeaders[kHeaderHeartBeat] = kNoHeartBeat;
 
     [self sendFrameWithCommand:kCommandConnect
