@@ -1,0 +1,6 @@
+[
+  "-workspace", "StompKit.xcworkspace",
+  "-scheme", "StompKit",
+  "-sdk", "iphonesimulator",
+  "-arch", "i386"
+]
