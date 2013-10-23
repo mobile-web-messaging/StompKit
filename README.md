@@ -1,6 +1,8 @@
 StompKit
 ========
 
+[![Build Status](https://travis-ci.org/mobile-web-messaging/StompKit.png?branch=master)](https://travis-ci.org/mobile-web-messaging/StompKit)
+
 STOMP Objective-C Client for iOS
 
 StompKit is a rewrite of [objc-stomp](https://github.com/juretta/objc-stomp) to create a modern event-driven Objective-C library using ARC, Grand Central Dispatch and blocks.
