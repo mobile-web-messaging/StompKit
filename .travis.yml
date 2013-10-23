@@ -1,1 +1,3 @@
 language: objective-c
+workspace: StompKit.xcworkspace
+scheme: StompKit
