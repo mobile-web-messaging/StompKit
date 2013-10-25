@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GCDAsyncSocket.h"
 
 #pragma mark Frame headers
 
