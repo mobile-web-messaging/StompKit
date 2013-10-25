@@ -56,6 +56,9 @@
 @property (nonatomic, retain) GCDAsyncSocket *socket;
 @property (nonatomic, copy) NSString *host;
 @property (nonatomic) NSUInteger port;
+@property (nonatomic) NSString *clientHeartBeat;
+@property (nonatomic, weak) NSTimer *pinger;
+@property (nonatomic, weak) NSTimer *ponger;
 
 @property (nonatomic, copy) void (^disconnectedHandler)(NSError *error);
 @property (nonatomic, copy) void (^connectionCompletionHandler)(STOMPFrame *connectedFrame, NSError *error);
@@ -73,7 +76,7 @@
 
 - (id)initWithCommand:(NSString *)theCommand
               headers:(NSDictionary *)theHeaders
-                body:(NSString *)theBody;
+                 body:(NSString *)theBody;
 
 - (NSData *)toData;
 
@@ -298,9 +301,11 @@
 @synthesize socket, host, port;
 @synthesize connectionCompletionHandler, disconnectedHandler, receiptHandler, errorHandler;
 @synthesize subscriptions;
+@synthesize pinger, ponger;
 
 BOOL connected;
 int idGenerator;
+CFAbsoluteTime serverActivity;
 
 #pragma mark -
 #pragma mark Public API
@@ -315,6 +320,7 @@ int idGenerator;
         idGenerator = 0;
         connected = NO;
         self.subscriptions = [[NSMutableDictionary alloc] init];
+        self.clientHeartBeat = @"5000,10000";
 	}
 	return self;
 }
@@ -339,8 +345,11 @@ int idGenerator;
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
-    if (connectHeaders[kHeaderHost]) {
+    if (!connectHeaders[kHeaderHost]) {
         connectHeaders[kHeaderHost] = host;
+    }
+    if (!connectHeaders[kHeaderHeartBeat]) {
+        connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
     }
 
     [self sendFrameWithCommand:kCommandConnect
@@ -414,6 +423,8 @@ int idGenerator;
                        headers:nil
                           body:nil];
     [self.subscriptions removeAllObjects];
+    [self.pinger invalidate];
+    [self.ponger invalidate];
     [self.socket disconnectAfterReadingAndWriting];
 }
 
@@ -424,15 +435,74 @@ int idGenerator;
 - (void)sendFrameWithCommand:(NSString *)command
                      headers:(NSDictionary *)headers
                         body:(NSString *)body {
+    if ([self.socket isDisconnected]) {
+        return;
+    }
     STOMPFrame *frame = [[STOMPFrame alloc] initWithCommand:command headers:headers body:body];
+    LogDebug(@">>> %@", frame);
     NSData *data = [frame toData];
     [self.socket writeData:data withTimeout:kDefaultTimeout tag:123];
 }
 
+- (void)sendPing:(NSTimer *)timer  {
+    if ([self.socket isDisconnected]) {
+        return;
+    }
+    [self.socket writeData:[GCDAsyncSocket LFData] withTimeout:kDefaultTimeout tag:123];
+    LogDebug(@">>> PING");
+}
+
+- (void)checkPong:(NSTimer *)timer  {
+    NSDictionary *dict = timer.userInfo;
+    NSInteger ttl = [dict[@"ttl"] intValue];
+
+    CFAbsoluteTime delta = CFAbsoluteTimeGetCurrent() - serverActivity;
+    if (delta > (ttl * 2)) {
+        LogDebug(@"did not receive server activity for the last %f seconds", delta);
+        [self disconnect:errorHandler];
+    }
+}
+
+- (void)setupHeartBeatWithClient:(NSString *)clientValues
+                          server:(NSString *)serverValues {
+    NSInteger cx, cy, sx, sy;
+
+    NSScanner *scanner = [NSScanner scannerWithString:clientValues];
+    scanner.charactersToBeSkipped = [NSCharacterSet characterSetWithCharactersInString:@", "];
+    [scanner scanInteger:&cx];
+    [scanner scanInteger:&cy];
+
+    scanner = [NSScanner scannerWithString:serverValues];
+    scanner.charactersToBeSkipped = [NSCharacterSet characterSetWithCharactersInString:@", "];
+    [scanner scanInteger:&sx];
+    [scanner scanInteger:&sy];
+
+    NSInteger pingTTL = ceil(MAX(cx, sy) / 1000);
+    NSInteger pongTTL = ceil(MAX(sx, cy) / 1000);
+
+    LogDebug(@"send heart-beat every %ld seconds", pingTTL);
+    LogDebug(@"expect to receive heart-beats every %ld seconds", pongTTL);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.pinger = [NSTimer scheduledTimerWithTimeInterval: pingTTL
+                                                       target: self
+                                                     selector: @selector(sendPing:)
+                                                     userInfo: nil
+                                                      repeats: YES];
+        self.ponger = [NSTimer scheduledTimerWithTimeInterval: pongTTL
+                                                       target: self
+                                                     selector: @selector(checkPong:)
+                                                     userInfo: @{@"ttl": [NSNumber numberWithInteger:pongTTL]}
+                                                      repeats: YES];
+    });
+
+}
+
 - (void)receivedFrame:(STOMPFrame *)frame {
-	// CONNECTED
-	if([kCommandConnected isEqual:frame.command]) {
+    // CONNECTED
+    if([kCommandConnected isEqual:frame.command]) {
         connected = YES;
+        [self setupHeartBeatWithClient:self.clientHeartBeat server:frame.headers[kHeaderHeartBeat]];
         if (self.connectionCompletionHandler) {
             self.connectionCompletionHandler(frame, nil);
         }
@@ -477,9 +547,15 @@ int idGenerator;
 - (void)socket:(GCDAsyncSocket *)sock
    didReadData:(NSData *)data
        withTag:(long)tag {
+    serverActivity = CFAbsoluteTimeGetCurrent();
     STOMPFrame *frame = [STOMPFrame STOMPFrameFromData:data];
     [self receivedFrame:frame];
     [self readFrame];
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
+    LogDebug(@"<<< PONG");
+    serverActivity = CFAbsoluteTimeGetCurrent();
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
@@ -488,10 +564,15 @@ int idGenerator;
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock
                   withError:(NSError *)err {
+    LogDebug(@"socket did disconnect");
     if (!connected && self.connectionCompletionHandler) {
         self.connectionCompletionHandler(nil, err);
-    } else if (connected && self.disconnectedHandler) {
-        self.disconnectedHandler(err);
+    } else if (connected) {
+        if (self.disconnectedHandler) {
+            self.disconnectedHandler(err);
+        } else if (self.errorHandler) {
+            self.errorHandler(err);
+        }
     }
     connected = NO;
 }
