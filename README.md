@@ -83,12 +83,6 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
             }];
 ```
 
-
-# Missing features:
-
-* protocol negotiation
-* heart-beating
-
 # Authors
 
 * [Jeff Mesnil](http://jmesnil.net/)
