@@ -7,16 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GCDAsyncSocket.h"
 
 #pragma mark Frame headers
 
 #define kHeaderAcceptVersion @"accept-version"
 #define kHeaderAck           @"ack"
 #define kHeaderContentLength @"content-length"
+#define kHeaderDestination   @"destination"
 #define kHeaderHeartBeat     @"heart-beat"
 #define kHeaderHost          @"host"
-#define kHeaderDestination   @"destination"
 #define kHeaderID            @"id"
 #define kHeaderLogin         @"login"
 #define kHeaderMessage       @"message"

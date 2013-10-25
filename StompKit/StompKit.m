@@ -7,6 +7,7 @@
 //
 
 #import "StompKit.h"
+#import "GCDAsyncSocket.h"
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
@@ -338,8 +339,9 @@ int idGenerator;
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
-    connectHeaders[kHeaderHost] = host;
-    connectHeaders[kHeaderHeartBeat] = kNoHeartBeat;
+    if (connectHeaders[kHeaderHost]) {
+        connectHeaders[kHeaderHost] = host;
+    }
 
     [self sendFrameWithCommand:kCommandConnect
                        headers:connectHeaders
