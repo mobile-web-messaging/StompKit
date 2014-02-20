@@ -11,10 +11,10 @@ This library uses the Grand Central Dispatch version of [CocoaAsyncSocket](https
 
 # Installation
 
-## Manual Installation
-Add GCDAsynSocket.{h,m} and StompKit.{h,m} to your project.
-
 ## Using CocoaPods
+
+StompKit is available on [CocoaPods](http://cocoapods.org/?q=StompKit).
+
 
 On your ```Podfile``` add this project:
 
@@ -31,7 +31,7 @@ For the first time, run ```pod install```, if you are updating the project invok
 Import the `StompKit.h` header file
 
 ```objc
-#import "StompKit.h"
+#import <StompKit.h>
 ```
 
 Send a message:
