@@ -119,8 +119,13 @@
 	NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
     LogDebug(@"<<< %@", msg);
     NSMutableArray *contents = (NSMutableArray *)[[msg componentsSeparatedByString:kLineFeed] mutableCopy];
-	if([[contents objectAtIndex:0] isEqual:@""]) {
-		[contents removeObjectAtIndex:0];
+    for (int i = 0; i < contents.count; i++) {
+        if ([[contents objectAtIndex:0] isEqual:@""]) {
+            [contents removeObjectAtIndex:0];
+        }
+        else {
+            break;
+        }
 	}
 	NSString *command = [[contents objectAtIndex:0] copy];
 	NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
