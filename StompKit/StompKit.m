@@ -350,6 +350,8 @@ CFAbsoluteTime serverActivity;
     }
     if (!connectHeaders[kHeaderHeartBeat]) {
         connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
+    } else {
+        self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
     }
 
     [self sendFrameWithCommand:kCommandConnect
@@ -484,16 +486,20 @@ CFAbsoluteTime serverActivity;
     LogDebug(@"expect to receive heart-beats every %ld seconds", pongTTL);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.pinger = [NSTimer scheduledTimerWithTimeInterval: pingTTL
-                                                       target: self
-                                                     selector: @selector(sendPing:)
-                                                     userInfo: nil
-                                                      repeats: YES];
-        self.ponger = [NSTimer scheduledTimerWithTimeInterval: pongTTL
-                                                       target: self
-                                                     selector: @selector(checkPong:)
-                                                     userInfo: @{@"ttl": [NSNumber numberWithInteger:pongTTL]}
-                                                      repeats: YES];
+        if (pingTTL > 0) {
+            self.pinger = [NSTimer scheduledTimerWithTimeInterval: pingTTL
+                                                           target: self
+                                                         selector: @selector(sendPing:)
+                                                         userInfo: nil
+                                                          repeats: YES];
+        }
+        if (pongTTL > 0) {
+            self.ponger = [NSTimer scheduledTimerWithTimeInterval: pongTTL
+                                                           target: self
+                                                         selector: @selector(checkPong:)
+                                                         userInfo: @{@"ttl": [NSNumber numberWithInteger:pongTTL]}
+                                                          repeats: YES];
+        }
     });
 
 }
