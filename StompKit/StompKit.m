@@ -303,7 +303,6 @@
 @synthesize subscriptions;
 @synthesize pinger, ponger;
 
-BOOL connected;
 int idGenerator;
 CFAbsoluteTime serverActivity;
 
@@ -318,7 +317,7 @@ CFAbsoluteTime serverActivity;
         self.host = aHost;
         self.port = aPort;
         idGenerator = 0;
-        connected = NO;
+        self.connected = NO;
         self.subscriptions = [[NSMutableDictionary alloc] init];
         self.clientHeartBeat = @"5000,10000";
 	}
@@ -507,7 +506,7 @@ CFAbsoluteTime serverActivity;
 - (void)receivedFrame:(STOMPFrame *)frame {
     // CONNECTED
     if([kCommandConnected isEqual:frame.command]) {
-        connected = YES;
+        self.connected = YES;
         [self setupHeartBeatWithClient:self.clientHeartBeat server:frame.headers[kHeaderHeartBeat]];
         if (self.connectionCompletionHandler) {
             self.connectionCompletionHandler(frame, nil);
@@ -530,13 +529,19 @@ CFAbsoluteTime serverActivity;
         // ERROR
 	} else if([kCommandError isEqual:frame.command]) {
         NSError *error = [[NSError alloc] initWithDomain:@"StompKit" code:1 userInfo:@{@"frame": frame}];
-        if (self.connectionCompletionHandler) {
+        // ERROR coming after the CONNECT frame
+        if (!self.connected && self.connectionCompletionHandler) {
             self.connectionCompletionHandler(frame, error);
+        } else if (self.errorHandler) {
+            self.errorHandler(error);
+        } else {
+            LogDebug(@"Unhandled ERROR frame: %@", frame);
         }
 	} else {
         NSError *error = [[NSError alloc] initWithDomain:@"StompKit"
                                                     code:2
-                                                userInfo:@{@"message": [NSString stringWithFormat:@"Unknown frame %@", frame.command]}];
+                                                userInfo:@{@"message": [NSString stringWithFormat:@"Unknown frame %@", frame.command],
+                                                           @"frame": frame}];
         if (self.errorHandler) {
             self.errorHandler(error);
         }
@@ -571,16 +576,16 @@ CFAbsoluteTime serverActivity;
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock
                   withError:(NSError *)err {
     LogDebug(@"socket did disconnect");
-    if (!connected && self.connectionCompletionHandler) {
+    if (!self.connected && self.connectionCompletionHandler) {
         self.connectionCompletionHandler(nil, err);
-    } else if (connected) {
+    } else if (self.connected) {
         if (self.disconnectedHandler) {
             self.disconnectedHandler(err);
         } else if (self.errorHandler) {
             self.errorHandler(err);
         }
     }
-    connected = NO;
+    self.connected = NO;
 }
 
 @end

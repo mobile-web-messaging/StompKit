@@ -86,6 +86,7 @@ typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 
 @property (nonatomic, copy) STOMPFrameHandler receiptHandler;
 @property (nonatomic, copy) void (^errorHandler)(NSError *error);
+@property (nonatomic, assign) BOOL connected;
 
 - (id)initWithHost:(NSString *)theHost
 			  port:(NSUInteger)thePort;
