@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F1632441ACDA8460047AE0C /* SKWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1632431ACDA8460047AE0C /* SKWebSocket.m */; };
+		1F1632451ACDA8460047AE0C /* SKWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1632431ACDA8460047AE0C /* SKWebSocket.m */; };
 		1F5B42B21ACD8AF100FABE04 /* SKRawSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */; };
 		1F5B42B31ACD8AF100FABE04 /* SKRawSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */; };
 		1F5B42B61ACDA59500FABE04 /* SKSocketUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B51ACDA59500FABE04 /* SKSocketUtility.m */; };
@@ -48,6 +50,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1F1632421ACDA8460047AE0C /* SKWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKWebSocket.h; sourceTree = "<group>"; };
+		1F1632431ACDA8460047AE0C /* SKWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKWebSocket.m; sourceTree = "<group>"; };
 		1F5B42AF1ACD8AF100FABE04 /* SKRawSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKRawSocket.h; sourceTree = "<group>"; };
 		1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKRawSocket.m; sourceTree = "<group>"; };
 		1F5B42B11ACD8AF100FABE04 /* SKSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKSocket.h; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 				1F5B42B11ACD8AF100FABE04 /* SKSocket.h */,
 				1F5B42B41ACDA59500FABE04 /* SKSocketUtility.h */,
 				1F5B42B51ACDA59500FABE04 /* SKSocketUtility.m */,
+				1F1632421ACDA8460047AE0C /* SKWebSocket.h */,
+				1F1632431ACDA8460047AE0C /* SKWebSocket.m */,
 			);
 			path = SKSocket;
 			sourceTree = "<group>";
@@ -338,6 +344,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				932BA58318056C4B00A03257 /* StompKit.m in Sources */,
+				1F1632441ACDA8460047AE0C /* SKWebSocket.m in Sources */,
 				1F5B42B61ACDA59500FABE04 /* SKSocketUtility.m in Sources */,
 				1F5B42B21ACD8AF100FABE04 /* SKRawSocket.m in Sources */,
 			);
@@ -348,6 +355,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				932BA59818056C4C00A03257 /* StompKitTests.m in Sources */,
+				1F1632451ACDA8460047AE0C /* SKWebSocket.m in Sources */,
 				1F5B42B71ACDA59500FABE04 /* SKSocketUtility.m in Sources */,
 				1F5B42B31ACD8AF100FABE04 /* SKRawSocket.m in Sources */,
 			);

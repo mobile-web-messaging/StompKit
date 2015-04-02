@@ -1,18 +1,16 @@
 //
-//  SKRawSocket.h
+//  SKWebSocket.h
 //  StompKit
 //
 //  Created by Travis Bowers on 4/2/15.
 //  Copyright (c) 2015 Jeff Mesnil. All rights reserved.
 //
 
-#ifndef StompKit_SKRawSocket_h
-#define StompKit_SKRawSocket_h
-
+#import <Foundation/Foundation.h>
 #import "SKSocket.h"
 
-@interface SKRawSocket : NSObject <SKSocket> {
+extern NSString *const SKWebSocketErrorDomain;
+
+@interface SKWebSocket : NSObject <SKSocket> {
 }
 @end
-
-#endif

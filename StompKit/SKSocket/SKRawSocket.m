@@ -10,7 +10,7 @@
 #import "SKRawSocket.h"
 #import "GCDAsyncSocket.h"
 
-@interface SKRawSocket()
+@interface SKRawSocket() <GCDAsyncSocketDelegate>
 @property (nonatomic, weak) id <SKSocketDelegate> delegate;
 @property (nonatomic, retain) GCDAsyncSocket *socket;
 @end
