@@ -13,6 +13,16 @@
 		1F5B42B31ACD8AF100FABE04 /* SKRawSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */; };
 		1F5B42B61ACDA59500FABE04 /* SKSocketUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B51ACDA59500FABE04 /* SKSocketUtility.m */; };
 		1F5B42B71ACDA59500FABE04 /* SKSocketUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B51ACDA59500FABE04 /* SKSocketUtility.m */; };
+		1F8326881ACDC8EE000D3A09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8326871ACDC8EE000D3A09 /* main.m */; };
+		1F83268B1ACDC8EE000D3A09 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F83268A1ACDC8EE000D3A09 /* AppDelegate.m */; };
+		1F83268E1ACDC8EE000D3A09 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F83268D1ACDC8EE000D3A09 /* ViewController.m */; };
+		1F8326911ACDC8EE000D3A09 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F83268F1ACDC8EE000D3A09 /* Main.storyboard */; };
+		1F8326931ACDC8EE000D3A09 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F8326921ACDC8EE000D3A09 /* Images.xcassets */; };
+		1F8326961ACDC8EE000D3A09 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F8326941ACDC8EE000D3A09 /* LaunchScreen.xib */; };
+		1F8326A91ACDC8FC000D3A09 /* libStompKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA57818056C4B00A03257 /* libStompKit.a */; };
+		1F8326AD1ACDC98D000D3A09 /* libPods-CocoaAsyncSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8326AC1ACDC98D000D3A09 /* libPods-CocoaAsyncSocket.a */; };
+		1F8326AF1ACDC994000D3A09 /* libPods-SocketRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8326AE1ACDC994000D3A09 /* libPods-SocketRocket.a */; };
+		1F8326B11ACDC9AE000D3A09 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8326B01ACDC9AE000D3A09 /* libicucore.dylib */; };
 		6C24B5EB8E0343E483E53CA2 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A4F2569A574CA6A0704DA6 /* libPods.a */; };
 		932BA57C18056C4B00A03257 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA57B18056C4B00A03257 /* Foundation.framework */; };
 		932BA58118056C4B00A03257 /* StompKit.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 932BA58018056C4B00A03257 /* StompKit.h */; };
@@ -57,6 +67,20 @@
 		1F5B42B11ACD8AF100FABE04 /* SKSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKSocket.h; sourceTree = "<group>"; };
 		1F5B42B41ACDA59500FABE04 /* SKSocketUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKSocketUtility.h; sourceTree = "<group>"; };
 		1F5B42B51ACDA59500FABE04 /* SKSocketUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKSocketUtility.m; sourceTree = "<group>"; };
+		1F8326831ACDC8EE000D3A09 /* StompKitSandbox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StompKitSandbox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F8326861ACDC8EE000D3A09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F8326871ACDC8EE000D3A09 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1F8326891ACDC8EE000D3A09 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1F83268A1ACDC8EE000D3A09 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1F83268C1ACDC8EE000D3A09 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		1F83268D1ACDC8EE000D3A09 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		1F8326901ACDC8EE000D3A09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1F8326921ACDC8EE000D3A09 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1F8326951ACDC8EE000D3A09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		1F8326AA1ACDC982000D3A09 /* libPods.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPods.a; path = "Pods/../build/Debug-iphoneos/libPods.a"; sourceTree = "<group>"; };
+		1F8326AC1ACDC98D000D3A09 /* libPods-CocoaAsyncSocket.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-CocoaAsyncSocket.a"; path = "Pods/../build/Debug-iphoneos/libPods-CocoaAsyncSocket.a"; sourceTree = "<group>"; };
+		1F8326AE1ACDC994000D3A09 /* libPods-SocketRocket.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-SocketRocket.a"; path = "Pods/../build/Debug-iphoneos/libPods-SocketRocket.a"; sourceTree = "<group>"; };
+		1F8326B01ACDC9AE000D3A09 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		37A4F2569A574CA6A0704DA6 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C55F3E01D49876D5B53EC05 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		591868DBFE214F55AB478DA7 /* libPods-StompKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StompKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +105,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1F8326801ACDC8EE000D3A09 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F8326B11ACDC9AE000D3A09 /* libicucore.dylib in Frameworks */,
+				1F8326AF1ACDC994000D3A09 /* libPods-SocketRocket.a in Frameworks */,
+				1F8326AD1ACDC98D000D3A09 /* libPods-CocoaAsyncSocket.a in Frameworks */,
+				1F8326A91ACDC8FC000D3A09 /* libStompKit.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		932BA57518056C4B00A03257 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -130,6 +165,30 @@
 			path = SKSocket;
 			sourceTree = "<group>";
 		};
+		1F8326841ACDC8EE000D3A09 /* StompKitSandbox */ = {
+			isa = PBXGroup;
+			children = (
+				1F8326891ACDC8EE000D3A09 /* AppDelegate.h */,
+				1F83268A1ACDC8EE000D3A09 /* AppDelegate.m */,
+				1F83268C1ACDC8EE000D3A09 /* ViewController.h */,
+				1F83268D1ACDC8EE000D3A09 /* ViewController.m */,
+				1F83268F1ACDC8EE000D3A09 /* Main.storyboard */,
+				1F8326921ACDC8EE000D3A09 /* Images.xcassets */,
+				1F8326941ACDC8EE000D3A09 /* LaunchScreen.xib */,
+				1F8326851ACDC8EE000D3A09 /* Supporting Files */,
+			);
+			path = StompKitSandbox;
+			sourceTree = "<group>";
+		};
+		1F8326851ACDC8EE000D3A09 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1F8326861ACDC8EE000D3A09 /* Info.plist */,
+				1F8326871ACDC8EE000D3A09 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		932BA56F18056C4B00A03257 = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +198,7 @@
 				938827EE18056CA2009A1164 /* README.md */,
 				932BA57D18056C4B00A03257 /* StompKit */,
 				932BA59118056C4C00A03257 /* StompKitTests */,
+				1F8326841ACDC8EE000D3A09 /* StompKitSandbox */,
 				932BA57A18056C4B00A03257 /* Frameworks */,
 				932BA57918056C4B00A03257 /* Products */,
 				1C9C6CD9BF6E5DAF68ADBC0D /* Pods */,
@@ -150,6 +210,7 @@
 			children = (
 				932BA57818056C4B00A03257 /* libStompKit.a */,
 				932BA58818056C4C00A03257 /* StompKitTests.xctest */,
+				1F8326831ACDC8EE000D3A09 /* StompKitSandbox.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,6 +218,10 @@
 		932BA57A18056C4B00A03257 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1F8326B01ACDC9AE000D3A09 /* libicucore.dylib */,
+				1F8326AE1ACDC994000D3A09 /* libPods-SocketRocket.a */,
+				1F8326AC1ACDC98D000D3A09 /* libPods-CocoaAsyncSocket.a */,
+				1F8326AA1ACDC982000D3A09 /* libPods.a */,
 				932BA57B18056C4B00A03257 /* Foundation.framework */,
 				932BA58918056C4C00A03257 /* XCTest.framework */,
 				932BA58C18056C4C00A03257 /* UIKit.framework */,
@@ -198,6 +263,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1F8326821ACDC8EE000D3A09 /* StompKitSandbox */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1F8326A71ACDC8EE000D3A09 /* Build configuration list for PBXNativeTarget "StompKitSandbox" */;
+			buildPhases = (
+				1F83267F1ACDC8EE000D3A09 /* Sources */,
+				1F8326801ACDC8EE000D3A09 /* Frameworks */,
+				1F8326811ACDC8EE000D3A09 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StompKitSandbox;
+			productName = StompKitSandbox;
+			productReference = 1F8326831ACDC8EE000D3A09 /* StompKitSandbox.app */;
+			productType = "com.apple.product-type.application";
+		};
 		932BA57718056C4B00A03257 /* StompKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 932BA59B18056C4C00A03257 /* Build configuration list for PBXNativeTarget "StompKit" */;
@@ -245,6 +327,11 @@
 			attributes = {
 				LastUpgradeCheck = 0620;
 				ORGANIZATIONNAME = "Jeff Mesnil";
+				TargetAttributes = {
+					1F8326821ACDC8EE000D3A09 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+				};
 			};
 			buildConfigurationList = 932BA57318056C4B00A03257 /* Build configuration list for PBXProject "StompKit" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -252,6 +339,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 932BA56F18056C4B00A03257;
 			productRefGroup = 932BA57918056C4B00A03257 /* Products */;
@@ -260,11 +348,22 @@
 			targets = (
 				932BA57718056C4B00A03257 /* StompKit */,
 				932BA58718056C4C00A03257 /* StompKitTests */,
+				1F8326821ACDC8EE000D3A09 /* StompKitSandbox */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1F8326811ACDC8EE000D3A09 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F8326911ACDC8EE000D3A09 /* Main.storyboard in Resources */,
+				1F8326961ACDC8EE000D3A09 /* LaunchScreen.xib in Resources */,
+				1F8326931ACDC8EE000D3A09 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		932BA58618056C4C00A03257 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -339,6 +438,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1F83267F1ACDC8EE000D3A09 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F83268E1ACDC8EE000D3A09 /* ViewController.m in Sources */,
+				1F83268B1ACDC8EE000D3A09 /* AppDelegate.m in Sources */,
+				1F8326881ACDC8EE000D3A09 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		932BA57418056C4B00A03257 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -372,6 +481,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1F83268F1ACDC8EE000D3A09 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1F8326901ACDC8EE000D3A09 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		1F8326941ACDC8EE000D3A09 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1F8326951ACDC8EE000D3A09 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
 		932BA59418056C4C00A03257 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -383,6 +508,53 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1F8326A31ACDC8EE000D3A09 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = StompKitSandbox/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1F8326A41ACDC8EE000D3A09 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = StompKitSandbox/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		932BA59918056C4C00A03257 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -416,6 +588,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -446,6 +619,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -510,6 +684,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1F8326A71ACDC8EE000D3A09 /* Build configuration list for PBXNativeTarget "StompKitSandbox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1F8326A31ACDC8EE000D3A09 /* Debug */,
+				1F8326A41ACDC8EE000D3A09 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		932BA57318056C4B00A03257 /* Build configuration list for PBXProject "StompKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
