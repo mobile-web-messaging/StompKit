@@ -9,9 +9,12 @@
 #ifndef StompKit_SKSocket_h
 #define StompKit_SKSocket_h
 
+#import "SKSocketUtility.h"
+
 // forward declare
 @class SKSocket;
 
+// SKSocket delegate interface
 @protocol SKSocketDelegate <NSObject>
 @optional
 - (void)socket:(SKSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
@@ -21,6 +24,8 @@
 @end
 
 
+
+// SKSocket abstract interface
 @protocol SKSocket <NSObject>
 - (id)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
 - (BOOL)connectToHost:(NSString*)host onPort:(uint16_t)port error:(NSError **)errPtr;

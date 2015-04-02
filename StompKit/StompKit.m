@@ -7,8 +7,8 @@
 //
 
 #import "StompKit.h"
-#import "GCDAsyncSocket.h"
-#import "SKSocket.h"
+#import "SKSocket/SKSocket.h"
+#import "SKSocket/SKRawSocket.h"
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
@@ -54,7 +54,7 @@
 
 @interface STOMPClient()
 
-@property (nonatomic, retain) GCDAsyncSocket *socket;
+@property (nonatomic, retain) id<SKSocket> socket;
 @property (nonatomic, copy) NSString *host;
 @property (nonatomic) NSUInteger port;
 @property (nonatomic) NSString *clientHeartBeat;
@@ -313,8 +313,7 @@ CFAbsoluteTime serverActivity;
 - (id)initWithHost:(NSString *)aHost
               port:(NSUInteger)aPort {
     if(self = [super init]) {
-        self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self
-                                                 delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         self.host = aHost;
         self.port = aPort;
         idGenerator = 0;
@@ -450,7 +449,8 @@ CFAbsoluteTime serverActivity;
     if ([self.socket isDisconnected]) {
         return;
     }
-    [self.socket writeData:[GCDAsyncSocket LFData] withTimeout:kDefaultTimeout tag:123];
+
+    [self.socket writeData:[SKSocketUtility lineFeedData] withTimeout:kDefaultTimeout tag:123];
     LogDebug(@">>> PING");
 }
 
@@ -550,32 +550,29 @@ CFAbsoluteTime serverActivity;
 }
 
 - (void)readFrame {
-	[[self socket] readDataToData:[GCDAsyncSocket ZeroData] withTimeout:-1 tag:0];
+	[[self socket] readDataToData:[SKSocketUtility zeroData] withTimeout:-1 tag:0];
 }
 
 #pragma mark -
-#pragma mark GCDAsyncSocketDelegate
+#pragma mark SKSocketDelegate
 
-- (void)socket:(GCDAsyncSocket *)sock
-   didReadData:(NSData *)data
-       withTag:(long)tag {
+- (void)socket:(SKSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     serverActivity = CFAbsoluteTimeGetCurrent();
     STOMPFrame *frame = [STOMPFrame STOMPFrameFromData:data];
     [self receivedFrame:frame];
     [self readFrame];
 }
 
-- (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
+- (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
     LogDebug(@"<<< PONG");
     serverActivity = CFAbsoluteTimeGetCurrent();
 }
 
-- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
+- (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
     [self readFrame];
 }
 
-- (void)socketDidDisconnect:(GCDAsyncSocket *)sock
-                  withError:(NSError *)err {
+- (void)socketDidDisconnect:(SKSocket *)sock withError:(NSError *)err {
     LogDebug(@"socket did disconnect");
     if (!self.connected && self.connectionCompletionHandler) {
         self.connectionCompletionHandler(nil, err);
