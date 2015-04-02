@@ -17,8 +17,8 @@
 // SKSocket delegate interface
 @protocol SKSocketDelegate <NSObject>
 @optional
-- (void)socket:(SKSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
-- (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag;
+- (void)socket:(SKSocket *)sock didReadData:(NSData *)data;
+- (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength;
 - (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port;
 - (void)socketDidDisconnect:(SKSocket *)sock withError:(NSError *)err;
 @end
@@ -30,8 +30,8 @@
 - (id)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
 - (BOOL)connectToHost:(NSString*)host onPort:(uint16_t)port error:(NSError **)errPtr;
 - (BOOL)isDisconnected;
-- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag;
-- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag;
+- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout;
+- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout;
 - (void)disconnectAfterReadingAndWriting;
 
 @end

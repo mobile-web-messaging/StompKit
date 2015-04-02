@@ -46,11 +46,11 @@ NSString *const SKWebSocketErrorDomain = @"SKWebSocketErrorDomain";
     return !self.connected;
 }
 
-- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag {
+- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout {
     [socket send:data];
 }
 
-- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag {
+- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout {
     // not supported
     //[socket readDataToData:data withTimeout:timeout tag:tag];
 }
@@ -63,7 +63,7 @@ NSString *const SKWebSocketErrorDomain = @"SKWebSocketErrorDomain";
 #pragma mark -
 #pragma mark SRWebSocketDelegate
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
-    [delegate socket:(SKSocket*)self didReadData:message withTag:123];
+    [delegate socket:(SKSocket*)self didReadData:message];
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {

@@ -42,12 +42,12 @@
     return [socket isDisconnected];
 }
 
-- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag {
-    [socket writeData:data withTimeout:timeout tag:tag];
+- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout {
+    [socket writeData:data withTimeout:timeout tag:123];
 }
 
-- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag {
-    [socket readDataToData:data withTimeout:timeout tag:tag];
+- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout {
+    [socket readDataToData:data withTimeout:timeout tag:123];
     
 }
 
@@ -60,13 +60,13 @@
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     if (self.delegate != nil) {
-        [delegate socket:(SKSocket*)self didReadData:data withTag:tag];
+        [delegate socket:(SKSocket*)self didReadData:data];
     }
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
     if (self.delegate != nil) {
-        [delegate socket:(SKSocket*)self didReadPartialDataOfLength:partialLength tag:tag];
+        [delegate socket:(SKSocket*)self didReadPartialDataOfLength:partialLength];
     }
 }
 

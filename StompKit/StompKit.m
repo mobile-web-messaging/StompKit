@@ -442,7 +442,7 @@ CFAbsoluteTime serverActivity;
     STOMPFrame *frame = [[STOMPFrame alloc] initWithCommand:command headers:headers body:body];
     LogDebug(@">>> %@", frame);
     NSData *data = [frame toData];
-    [self.socket writeData:data withTimeout:kDefaultTimeout tag:123];
+    [self.socket writeData:data withTimeout:kDefaultTimeout];
 }
 
 - (void)sendPing:(NSTimer *)timer  {
@@ -450,7 +450,7 @@ CFAbsoluteTime serverActivity;
         return;
     }
 
-    [self.socket writeData:[SKSocketUtility lineFeedData] withTimeout:kDefaultTimeout tag:123];
+    [self.socket writeData:[SKSocketUtility lineFeedData] withTimeout:kDefaultTimeout];
     LogDebug(@">>> PING");
 }
 
@@ -550,20 +550,20 @@ CFAbsoluteTime serverActivity;
 }
 
 - (void)readFrame {
-	[[self socket] readDataToData:[SKSocketUtility zeroData] withTimeout:-1 tag:0];
+	[[self socket] readDataToData:[SKSocketUtility zeroData] withTimeout:-1];
 }
 
 #pragma mark -
 #pragma mark SKSocketDelegate
 
-- (void)socket:(SKSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+- (void)socket:(SKSocket *)sock didReadData:(NSData *)data {
     serverActivity = CFAbsoluteTimeGetCurrent();
     STOMPFrame *frame = [STOMPFrame STOMPFrameFromData:data];
     [self receivedFrame:frame];
     [self readFrame];
 }
 
-- (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
+- (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength {
     LogDebug(@"<<< PONG");
     serverActivity = CFAbsoluteTimeGetCurrent();
 }
