@@ -48,7 +48,7 @@
 
 - (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag {
     [socket readDataToData:data withTimeout:timeout tag:tag];
-
+    
 }
 
 - (void)disconnectAfterReadingAndWriting {
