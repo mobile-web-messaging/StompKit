@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F5B42B21ACD8AF100FABE04 /* SKRawSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */; };
+		1F5B42B31ACD8AF100FABE04 /* SKRawSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */; };
 		6C24B5EB8E0343E483E53CA2 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A4F2569A574CA6A0704DA6 /* libPods.a */; };
 		932BA57C18056C4B00A03257 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932BA57B18056C4B00A03257 /* Foundation.framework */; };
 		932BA58118056C4B00A03257 /* StompKit.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 932BA58018056C4B00A03257 /* StompKit.h */; };
@@ -44,6 +46,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1F5B42AF1ACD8AF100FABE04 /* SKRawSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKRawSocket.h; sourceTree = "<group>"; };
+		1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKRawSocket.m; sourceTree = "<group>"; };
+		1F5B42B11ACD8AF100FABE04 /* SKSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKSocket.h; sourceTree = "<group>"; };
 		37A4F2569A574CA6A0704DA6 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C55F3E01D49876D5B53EC05 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		591868DBFE214F55AB478DA7 /* libPods-StompKitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StompKitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +108,16 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		1F5B42AE1ACD8AF100FABE04 /* SKSocket */ = {
+			isa = PBXGroup;
+			children = (
+				1F5B42AF1ACD8AF100FABE04 /* SKRawSocket.h */,
+				1F5B42B01ACD8AF100FABE04 /* SKRawSocket.m */,
+				1F5B42B11ACD8AF100FABE04 /* SKSocket.h */,
+			);
+			path = SKSocket;
+			sourceTree = "<group>";
+		};
 		932BA56F18056C4B00A03257 = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +159,7 @@
 			children = (
 				932BA58018056C4B00A03257 /* StompKit.h */,
 				932BA58218056C4B00A03257 /* StompKit.m */,
+				1F5B42AE1ACD8AF100FABE04 /* SKSocket */,
 			);
 			path = StompKit;
 			sourceTree = "<group>";
@@ -316,6 +332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				932BA58318056C4B00A03257 /* StompKit.m in Sources */,
+				1F5B42B21ACD8AF100FABE04 /* SKRawSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				932BA59818056C4C00A03257 /* StompKitTests.m in Sources */,
+				1F5B42B31ACD8AF100FABE04 /* SKRawSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

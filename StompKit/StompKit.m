@@ -8,6 +8,7 @@
 
 #import "StompKit.h"
 #import "GCDAsyncSocket.h"
+#import "SKSocket.h"
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
