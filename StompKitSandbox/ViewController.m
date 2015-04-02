@@ -10,10 +10,11 @@
 #import "StompKit.h"
 
 @interface ViewController ()
-
+@property (nonatomic, strong) STOMPClient *client;
 @end
 
 @implementation ViewController
+@synthesize client;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,11 +28,10 @@
 
 - (IBAction)connectButtonPressed:(id)sender {
     // create the client
-    STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
-                                                       port:61613];
+    client = [[STOMPClient alloc] initWithHost:@"ws://le3.liveexpertdev.net:61614/stomp" port:0];
     // connect to the broker
-    [client connectWithLogin:@"mylogin"
-                    passcode:@"mypassword"
+    [client connectWithLogin:@"admin"
+                    passcode:@"admin"
            completionHandler:^(STOMPFrame *_, NSError *error) {
                if (error) {
                    NSLog(@"%@", error);
@@ -43,6 +43,17 @@
                // and disconnect
                [client disconnect];
            }];
+}
+
+- (IBAction)disconnectButtonPressed:(id)sender {
+    if (client != nil) {
+        [client disconnect];
+    }
+}
+
+- (IBAction)sendButtonPressed:(id)sender {
+    // send a message
+    [client sendTo:@"/queue/travis" body:@"Hello, iOS!"];
 }
 
 @end

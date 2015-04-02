@@ -9,6 +9,7 @@
 #import "StompKit.h"
 #import "SKSocket/SKSocket.h"
 #import "SKSocket/SKRawSocket.h"
+#import "SKSocket/SKWebSocket.h"
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
@@ -64,6 +65,7 @@
 @property (nonatomic, copy) void (^disconnectedHandler)(NSError *error);
 @property (nonatomic, copy) void (^connectionCompletionHandler)(STOMPFrame *connectedFrame, NSError *error);
 @property (nonatomic, retain) NSMutableDictionary *subscriptions;
+@property (nonatomic, strong) NSMutableDictionary *connectHeaders;
 
 - (void) sendFrameWithCommand:(NSString *)command
                       headers:(NSDictionary *)headers
@@ -302,6 +304,7 @@
 @synthesize socket, host, port;
 @synthesize connectionCompletionHandler, disconnectedHandler, receiptHandler, errorHandler;
 @synthesize subscriptions;
+@synthesize connectHeaders;
 @synthesize pinger, ponger;
 
 int idGenerator;
@@ -313,7 +316,9 @@ CFAbsoluteTime serverActivity;
 - (id)initWithHost:(NSString *)aHost
               port:(NSUInteger)aPort {
     if(self = [super init]) {
-        self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        //self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        self.socket = [[SKWebSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+
         self.host = aHost;
         self.port = aPort;
         idGenerator = 0;
@@ -334,6 +339,9 @@ CFAbsoluteTime serverActivity;
 - (void)connectWithHeaders:(NSDictionary *)headers
          completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
     self.connectionCompletionHandler = completionHandler;
+    
+    // build connection headers
+    self.connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
 
     NSError *err;
     if(![self.socket connectToHost:host onPort:port error:&err]) {
@@ -341,21 +349,6 @@ CFAbsoluteTime serverActivity;
             self.connectionCompletionHandler(nil, err);
         }
     }
-
-    NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
-    connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
-    if (!connectHeaders[kHeaderHost]) {
-        connectHeaders[kHeaderHost] = host;
-    }
-    if (!connectHeaders[kHeaderHeartBeat]) {
-        connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
-    } else {
-        self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
-    }
-
-    [self sendFrameWithCommand:kCommandConnect
-                       headers:connectHeaders
-                          body: nil];
 }
 
 - (void)sendTo:(NSString *)destination
@@ -568,7 +561,20 @@ CFAbsoluteTime serverActivity;
     serverActivity = CFAbsoluteTimeGetCurrent();
 }
 
-- (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
+- (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)aHost port:(uint16_t)aPort {
+    self.connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+    if (!connectHeaders[kHeaderHost]) {
+        connectHeaders[kHeaderHost] = host;
+    }
+    if (!connectHeaders[kHeaderHeartBeat]) {
+        connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
+    } else {
+        self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
+    }
+    
+    [self sendFrameWithCommand:kCommandConnect
+                       headers:connectHeaders
+                          body: nil];
     [self readFrame];
 }
 

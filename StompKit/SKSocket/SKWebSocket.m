@@ -56,8 +56,7 @@ NSString *const SKWebSocketErrorDomain = @"SKWebSocketErrorDomain";
 }
 
 - (void)disconnectAfterReadingAndWriting {
-    // not supported
-    //[socket disconnectAfterReadingAndWriting];
+    [socket close];
 }
 
 #pragma mark -
