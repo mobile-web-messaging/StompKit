@@ -317,9 +317,14 @@ CFAbsoluteTime serverActivity;
 
 - (id)initWithHost:(NSString *)aHost andPort:(NSUInteger)aPort {
     if(self = [super init]) {
-        //self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-        self.socket = [[SKWebSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-
+        // rough comparision now to determine whether or not use websocket
+        if ([aHost hasPrefix:@"ws://"]) {
+            self.socket = [[SKWebSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        }
+        else {
+            self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        }
+        
         self.host = aHost;
         self.port = aPort;
         idGenerator = 0;
