@@ -91,6 +91,7 @@ typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 - (id)initWithHost:(NSString *)theHost
 			  port:(NSUInteger)thePort;
 
+- (void)connectWithCompletionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler;
 - (void)connectWithLogin:(NSString *)login
                 passcode:(NSString *)passcode
        completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler;

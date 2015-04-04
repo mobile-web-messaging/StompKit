@@ -47,7 +47,8 @@ NSString *const SKWebSocketErrorDomain = @"SKWebSocketErrorDomain";
 }
 
 - (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout {
-    [socket send:data];
+    // convert data to string and send
+    [socket send:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
 }
 
 - (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout {
@@ -62,7 +63,7 @@ NSString *const SKWebSocketErrorDomain = @"SKWebSocketErrorDomain";
 #pragma mark -
 #pragma mark SRWebSocketDelegate
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
-    [delegate socket:(SKSocket*)self didReadData:message];
+    [delegate socket:(SKSocket*)self didReadDataWithString:message];
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {

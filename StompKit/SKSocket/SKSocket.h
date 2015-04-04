@@ -17,7 +17,8 @@
 // SKSocket delegate interface
 @protocol SKSocketDelegate <NSObject>
 @optional
-- (void)socket:(SKSocket *)sock didReadData:(NSData *)data;
+- (void)socket:(SKSocket *)sock didReadDataWithData:(NSData *)data;
+- (void)socket:(SKSocket *)sock didReadDataWithString:(NSString *)data;
 - (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength;
 - (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port;
 - (void)socketDidDisconnect:(SKSocket *)sock withError:(NSError *)err;

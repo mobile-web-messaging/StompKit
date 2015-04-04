@@ -60,7 +60,7 @@
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     if (self.delegate != nil) {
-        [delegate socket:(SKSocket*)self didReadData:data];
+        [delegate socket:(SKSocket*)self didReadDataWithData:data];
     }
 }
 

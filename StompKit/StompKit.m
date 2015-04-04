@@ -117,9 +117,7 @@
     return [[self toString] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-+ (STOMPFrame *) STOMPFrameFromData:(NSData *)data {
-    NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length])];
-	NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
++ (STOMPFrame *) STOMPFrameFromDataString:(NSString *)msg {
     LogDebug(@"<<< %@", msg);
     NSMutableArray *contents = (NSMutableArray *)[[msg componentsSeparatedByString:kLineFeed] mutableCopy];
     while ([contents count] > 0 && [contents[0] isEqual:@""]) {
@@ -329,6 +327,10 @@ CFAbsoluteTime serverActivity;
 	return self;
 }
 
+- (void)connectWithCompletionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
+    [self connectWithHeaders:nil completionHandler:completionHandler];
+}
+
 - (void)connectWithLogin:(NSString *)login
                 passcode:(NSString *)passcode
        completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
@@ -341,8 +343,13 @@ CFAbsoluteTime serverActivity;
     self.connectionCompletionHandler = completionHandler;
     
     // build connection headers
-    self.connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
-
+    if (headers != nil) {
+        self.connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
+    }
+    else {
+        self.connectHeaders = [[NSMutableDictionary alloc] init];
+    }
+    
     NSError *err;
     if(![self.socket connectToHost:host onPort:port error:&err]) {
         if (self.connectionCompletionHandler) {
@@ -546,12 +553,24 @@ CFAbsoluteTime serverActivity;
 	[[self socket] readDataToData:[SKSocketUtility zeroData] withTimeout:-1];
 }
 
++ (NSString *)stringFromData:(NSData*)data {
+    return [[NSString alloc] initWithData:[data copy] encoding:NSUTF8StringEncoding];
+
+}
+
 #pragma mark -
 #pragma mark SKSocketDelegate
 
-- (void)socket:(SKSocket *)sock didReadData:(NSData *)data {
+- (void)socket:(SKSocket *)sock didReadDataWithData:(NSData *)data {
     serverActivity = CFAbsoluteTimeGetCurrent();
-    STOMPFrame *frame = [STOMPFrame STOMPFrameFromData:data];
+    STOMPFrame *frame = [STOMPFrame STOMPFrameFromDataString:[STOMPClient stringFromData:data]];
+    [self receivedFrame:frame];
+    [self readFrame];
+}
+
+- (void)socket:(SKSocket *)sock didReadDataWithString:(NSString *)data {
+    serverActivity = CFAbsoluteTimeGetCurrent();
+    STOMPFrame *frame = [STOMPFrame STOMPFrameFromDataString:data];
     [self receivedFrame:frame];
     [self readFrame];
 }
@@ -562,20 +581,22 @@ CFAbsoluteTime serverActivity;
 }
 
 - (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)aHost port:(uint16_t)aPort {
-    self.connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
-    if (!connectHeaders[kHeaderHost]) {
-        connectHeaders[kHeaderHost] = host;
-    }
-    if (!connectHeaders[kHeaderHeartBeat]) {
-        connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
-    } else {
-        self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
-    }
-    
-    [self sendFrameWithCommand:kCommandConnect
-                       headers:connectHeaders
-                          body: nil];
-    [self readFrame];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+        if (!connectHeaders[kHeaderHost]) {
+            connectHeaders[kHeaderHost] = host;
+        }
+        if (!connectHeaders[kHeaderHeartBeat]) {
+            connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
+        } else {
+            self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
+        }
+        
+        [self sendFrameWithCommand:kCommandConnect
+                           headers:connectHeaders
+                              body: nil];
+        [self readFrame];
+    });
 }
 
 - (void)socketDidDisconnect:(SKSocket *)sock withError:(NSError *)err {

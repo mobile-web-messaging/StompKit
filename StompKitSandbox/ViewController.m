@@ -30,19 +30,17 @@
     // create the client
     client = [[STOMPClient alloc] initWithHost:@"ws://le3.liveexpertdev.net:61614/stomp" port:0];
     // connect to the broker
-    [client connectWithLogin:@"admin"
-                    passcode:@"admin"
-           completionHandler:^(STOMPFrame *_, NSError *error) {
-               if (error) {
-                   NSLog(@"%@", error);
-                   return;
-               }
-               
-               // send a message
-               [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
-               // and disconnect
-               [client disconnect];
-           }];
+    [client connectWithCompletionHandler:^(STOMPFrame *_, NSError *error) {
+        if (error) {
+            NSLog(@"%@", error);
+            return;
+        }
+        
+        // send a message
+        [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
+        // and disconnect
+        [client disconnect];
+    }];
 }
 
 - (IBAction)disconnectButtonPressed:(id)sender {
@@ -53,7 +51,7 @@
 
 - (IBAction)sendButtonPressed:(id)sender {
     // send a message
-    [client sendTo:@"/queue/travis" body:@"Hello, iOS!"];
+    [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
 }
 
 @end
