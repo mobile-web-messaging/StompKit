@@ -311,8 +311,11 @@ CFAbsoluteTime serverActivity;
 #pragma mark -
 #pragma mark Public API
 
-- (id)initWithHost:(NSString *)aHost
-              port:(NSUInteger)aPort {
+- (id)initWithHost:(NSString *)theHost {
+    return [self initWithHost:theHost andPort:0];
+}
+
+- (id)initWithHost:(NSString *)aHost andPort:(NSUInteger)aPort {
     if(self = [super init]) {
         //self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         self.socket = [[SKWebSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];

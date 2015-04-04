@@ -28,7 +28,7 @@
 
 - (IBAction)connectButtonPressed:(id)sender {
     // create the client
-    client = [[STOMPClient alloc] initWithHost:@"ws://le3.liveexpertdev.net:61614/stomp" port:0];
+    client = [[STOMPClient alloc] initWithHost:@"ws://localhost:61614/stomp"];
     // connect to the broker
     [client connectWithCompletionHandler:^(STOMPFrame *_, NSError *error) {
         if (error) {
@@ -37,7 +37,7 @@
         }
         
         // send a message
-        [client sendTo:@"/queue/myqueue" body:@"Hello, iOS!"];
+        [client sendTo:@"/queue/bowers" body:@"Hello, iOS!"];
         // and disconnect
         [client disconnect];
     }];

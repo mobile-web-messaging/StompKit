@@ -30,7 +30,7 @@
     [super setUp];
 
     self.client = [[STOMPClient alloc] initWithHost:HOST
-                                               port:PORT];
+                                               andPort:PORT];
 }
 
 - (void)tearDown
@@ -43,7 +43,7 @@
 
     dispatch_semaphore_t errorReceived = dispatch_semaphore_create(0);
 
-    STOMPClient *otherClient = [[STOMPClient alloc] initWithHost:@"invalid host" port:61613];
+    STOMPClient *otherClient = [[STOMPClient alloc] initWithHost:@"invalid host" andPort:61613];
     [otherClient connectWithLogin:LOGIN
                          passcode:PASSCODE
                 completionHandler:^(STOMPFrame *connectedFrame, NSError *error) {
