@@ -11,6 +11,7 @@
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
+#define kVersion1_1 @"1.1"
 #define kNoHeartBeat @"0,0"
 
 #pragma mark Logging macros
@@ -132,7 +133,7 @@
             for (int i=0; i < [line length]; i++) {
                 unichar c = [line characterAtIndex:i];
                 if (c != '\x00') {
-                    [body appendString:[NSString stringWithFormat:@"%c", c]];
+                    [body appendString:[NSString stringWithFormat:@"%C", c]];
                 }
             }
 		} else {
@@ -343,7 +344,7 @@ CFAbsoluteTime serverActivity;
     }
 
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
-    connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+    connectHeaders[kHeaderAcceptVersion] = kVersion1_1;  // kVersion1_2; // version 1.1 (dgoon)
     if (!connectHeaders[kHeaderHost]) {
         connectHeaders[kHeaderHost] = host;
     }
@@ -481,6 +482,9 @@ CFAbsoluteTime serverActivity;
     NSInteger pingTTL = ceil(MAX(cx, sy) / 1000);
     NSInteger pongTTL = ceil(MAX(sx, cy) / 1000);
 
+    // disable heratbeat (dgoon)
+
+    return;
     LogDebug(@"send heart-beat every %ld seconds", pingTTL);
     LogDebug(@"expect to receive heart-beats every %ld seconds", pongTTL);
 
