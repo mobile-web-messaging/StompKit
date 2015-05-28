@@ -87,6 +87,8 @@ typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 @property (nonatomic, copy) STOMPFrameHandler receiptHandler;
 @property (nonatomic, copy) void (^errorHandler)(NSError *error);
 @property (nonatomic, assign) BOOL connected;
+@property (nonatomic, strong) NSMutableDictionary* connectHeaders;
+@property (nonatomic, assign) BOOL useSSL;
 
 - (id)initWithHost:(NSString *)theHost
 			  port:(NSUInteger)thePort;

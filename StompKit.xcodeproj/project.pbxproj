@@ -12,12 +12,12 @@
 		2CEE28491B16F69700553B49 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CEE28451B16F69700553B49 /* GCDAsyncSocket.m */; };
 		2CEE284A1B16F69700553B49 /* GCDAsyncUdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CEE28461B16F69700553B49 /* GCDAsyncUdpSocket.h */; };
 		2CEE284B1B16F69700553B49 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CEE28471B16F69700553B49 /* GCDAsyncUdpSocket.m */; };
-		2CEE284C1B16F6A200553B49 /* StompKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 932BA58018056C4B00A03257 /* StompKit.h */; };
+		2CEE284C1B16F6A200553B49 /* StompKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 932BA58018056C4B00A03257 /* StompKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2CEE284D1B16F6A200553B49 /* StompKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 932BA58218056C4B00A03257 /* StompKit.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2CEE28281B16F66000553B49 /* StompKitFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StompKitFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CEE28281B16F66000553B49 /* StompKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StompKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CEE282B1B16F66000553B49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2CEE282C1B16F66000553B49 /* StompKitFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StompKitFramework.h; sourceTree = "<group>"; };
 		2CEE28441B16F69700553B49 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = StompKit/GCDAsyncSocket.h; sourceTree = "<group>"; };
@@ -97,7 +97,7 @@
 		932BA57918056C4B00A03257 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2CEE28281B16F66000553B49 /* StompKitFramework.framework */,
+				2CEE28281B16F66000553B49 /* StompKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -172,7 +172,7 @@
 			);
 			name = StompKitFramework;
 			productName = StompKitFramework;
-			productReference = 2CEE28281B16F66000553B49 /* StompKitFramework.framework */;
+			productReference = 2CEE28281B16F66000553B49 /* StompKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -262,11 +262,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = StompKitFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "$(SRCROOT)/StompKit/module.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = StompKit;
+				PRODUCT_NAME = StompKit;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -279,7 +280,7 @@
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -291,11 +292,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = StompKitFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "$(SRCROOT)/StompKit/module.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = StompKit;
+				PRODUCT_NAME = StompKit;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -340,7 +342,7 @@
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -352,11 +354,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = StompKitFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "$(SRCROOT)/StompKit/module.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = StompKit;
+				PRODUCT_NAME = StompKit;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -445,6 +448,7 @@
 				2CEE28421B16F67600553B49 /* QA */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		932BA57318056C4B00A03257 /* Build configuration list for PBXProject "StompKit" */ = {
 			isa = XCConfigurationList;

@@ -334,6 +334,7 @@ CFAbsoluteTime serverActivity;
 
 - (void)connectWithHeaders:(NSDictionary *)headers
          completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
+    self.connectHeaders = nil;
     self.connectionCompletionHandler = completionHandler;
 
     NSError *err;
@@ -342,7 +343,6 @@ CFAbsoluteTime serverActivity;
             self.connectionCompletionHandler(nil, err);
         }
     }
-
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
     connectHeaders[kHeaderAcceptVersion] = kVersion1_1;  // kVersion1_2; // version 1.1 (dgoon)
     if (!connectHeaders[kHeaderHost]) {
@@ -354,9 +354,14 @@ CFAbsoluteTime serverActivity;
         self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
     }
 
-    [self sendFrameWithCommand:kCommandConnect
-                       headers:connectHeaders
-                          body: nil];
+    if (self.useSSL) {
+        self.connectHeaders =   connectHeaders;  // store for later use
+    }
+    else {
+        [self sendFrameWithCommand:kCommandConnect
+                           headers:connectHeaders
+                              body: nil];
+    }
 }
 
 - (void)sendTo:(NSString *)destination
@@ -574,7 +579,13 @@ CFAbsoluteTime serverActivity;
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
-    [self readFrame];
+    if (self.useSSL) {
+        // socektDidSecure 에서 실제로 프레임 주고받기를 시작해야 한다
+        [sock startTLS:nil];
+    }
+    else {
+        [self readFrame];
+    }
 }
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock
@@ -590,6 +601,14 @@ CFAbsoluteTime serverActivity;
         }
     }
     self.connected = NO;
+}
+
+- (void)socketDidSecure:(GCDAsyncSocket *)sock {
+    assert(self.connectHeaders != Nil);
+    [self sendFrameWithCommand:kCommandConnect
+                       headers:self.connectHeaders
+                          body: nil];
+    [self readFrame];
 }
 
 @end
