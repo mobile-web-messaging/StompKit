@@ -312,6 +312,7 @@ CFAbsoluteTime serverActivity;
 
 - (id)initWithHost:(NSString *)aHost
               port:(NSUInteger)aPort {
+    self.useSSL = false;
     if(self = [super init]) {
         self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self
                                                  delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
