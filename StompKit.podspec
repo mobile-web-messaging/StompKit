@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => 'https://github.com/mobile-web-messaging/StompKit.git', :tag => "#{s.version}" }
   s.platform     = :ios, 5.0
   s.source_files = 'StompKit/*.{h,m}'
-  s.public_header_files = 'StompKit/StompKit.h'
+  s.public_header_files = 'StompKit/StompKit.h', 'StompKit/SKSocket/SKSocket.h'
   s.requires_arc = true
   s.dependency 'CocoaAsyncSocket', '7.3.4'
   s.dependency 'SocketRocket', '0.3.1-beta2'
