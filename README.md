@@ -50,7 +50,7 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 [client connectWithLogin:@"mylogin"
                 passcode:@"mypassword"
        completionHandler:^(STOMPFrame *_, NSError *error) {
-            if (err) {
+            if (error) {
                 NSLog(@"%@", error);
                 return;
             }
@@ -72,7 +72,7 @@ STOMPClient *client = [[STOMPClient alloc] initWithHost:@"localhost"
 [client connectWithLogin:@"mylogin"
                 passcode:@"mypassword"
        completionHandler:^(STOMPFrame *_, NSError *error) {
-            if (err) {
+            if (error) {
                 NSLog(@"%@", error);
                 return;
             }

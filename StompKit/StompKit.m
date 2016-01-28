@@ -7,7 +7,9 @@
 //
 
 #import "StompKit.h"
-#import "GCDAsyncSocket.h"
+#import "SKSocket/SKSocket.h"
+#import "SKSocket/SKRawSocket.h"
+#import "SKSocket/SKWebSocket.h"
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
@@ -53,7 +55,7 @@
 
 @interface STOMPClient()
 
-@property (nonatomic, retain) GCDAsyncSocket *socket;
+@property (nonatomic, retain) id<SKSocket> socket;
 @property (nonatomic, copy) NSString *host;
 @property (nonatomic) NSUInteger port;
 @property (nonatomic) NSString *clientHeartBeat;
@@ -63,6 +65,7 @@
 @property (nonatomic, copy) void (^disconnectedHandler)(NSError *error);
 @property (nonatomic, copy) void (^connectionCompletionHandler)(STOMPFrame *connectedFrame, NSError *error);
 @property (nonatomic, retain) NSMutableDictionary *subscriptions;
+@property (nonatomic, strong) NSMutableDictionary *connectHeaders;
 
 - (void) sendFrameWithCommand:(NSString *)command
                       headers:(NSDictionary *)headers
@@ -114,9 +117,7 @@
     return [[self toString] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-+ (STOMPFrame *) STOMPFrameFromData:(NSData *)data {
-    NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length])];
-	NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
++ (STOMPFrame *) STOMPFrameFromDataString:(NSString *)msg {
     LogDebug(@"<<< %@", msg);
     NSMutableArray *contents = (NSMutableArray *)[[msg componentsSeparatedByString:kLineFeed] mutableCopy];
     while ([contents count] > 0 && [contents[0] isEqual:@""]) {
@@ -301,6 +302,7 @@
 @synthesize socket, host, port;
 @synthesize connectionCompletionHandler, disconnectedHandler, receiptHandler, errorHandler;
 @synthesize subscriptions;
+@synthesize connectHeaders;
 @synthesize pinger, ponger;
 
 int idGenerator;
@@ -309,11 +311,20 @@ CFAbsoluteTime serverActivity;
 #pragma mark -
 #pragma mark Public API
 
-- (id)initWithHost:(NSString *)aHost
-              port:(NSUInteger)aPort {
+- (id)initWithHost:(NSString *)theHost {
+    return [self initWithHost:theHost andPort:0];
+}
+
+- (id)initWithHost:(NSString *)aHost andPort:(NSUInteger)aPort {
     if(self = [super init]) {
-        self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self
-                                                 delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        // rough comparision now to determine whether or not use websocket
+        if ([aHost hasPrefix:@"ws://"]) {
+            self.socket = [[SKWebSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        }
+        else {
+            self.socket = [[SKRawSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        }
+        
         self.host = aHost;
         self.port = aPort;
         idGenerator = 0;
@@ -322,6 +333,10 @@ CFAbsoluteTime serverActivity;
         self.clientHeartBeat = @"5000,10000";
 	}
 	return self;
+}
+
+- (void)connectWithCompletionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
+    [self connectWithHeaders:nil completionHandler:completionHandler];
 }
 
 - (void)connectWithLogin:(NSString *)login
@@ -334,28 +349,21 @@ CFAbsoluteTime serverActivity;
 - (void)connectWithHeaders:(NSDictionary *)headers
          completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
     self.connectionCompletionHandler = completionHandler;
-
+    
+    // build connection headers
+    if (headers != nil) {
+        self.connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
+    }
+    else {
+        self.connectHeaders = [[NSMutableDictionary alloc] init];
+    }
+    
     NSError *err;
     if(![self.socket connectToHost:host onPort:port error:&err]) {
         if (self.connectionCompletionHandler) {
             self.connectionCompletionHandler(nil, err);
         }
     }
-
-    NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
-    connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
-    if (!connectHeaders[kHeaderHost]) {
-        connectHeaders[kHeaderHost] = host;
-    }
-    if (!connectHeaders[kHeaderHeartBeat]) {
-        connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
-    } else {
-        self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
-    }
-
-    [self sendFrameWithCommand:kCommandConnect
-                       headers:connectHeaders
-                          body: nil];
 }
 
 - (void)sendTo:(NSString *)destination
@@ -442,14 +450,15 @@ CFAbsoluteTime serverActivity;
     STOMPFrame *frame = [[STOMPFrame alloc] initWithCommand:command headers:headers body:body];
     LogDebug(@">>> %@", frame);
     NSData *data = [frame toData];
-    [self.socket writeData:data withTimeout:kDefaultTimeout tag:123];
+    [self.socket writeData:data withTimeout:kDefaultTimeout];
 }
 
 - (void)sendPing:(NSTimer *)timer  {
     if ([self.socket isDisconnected]) {
         return;
     }
-    [self.socket writeData:[GCDAsyncSocket LFData] withTimeout:kDefaultTimeout tag:123];
+
+    [self.socket writeData:[SKSocketUtility lineFeedData] withTimeout:kDefaultTimeout];
     LogDebug(@">>> PING");
 }
 
@@ -549,32 +558,56 @@ CFAbsoluteTime serverActivity;
 }
 
 - (void)readFrame {
-	[[self socket] readDataToData:[GCDAsyncSocket ZeroData] withTimeout:-1 tag:0];
+	[[self socket] readDataToData:[SKSocketUtility zeroData] withTimeout:-1];
+}
+
++ (NSString *)stringFromData:(NSData*)data {
+    return [[NSString alloc] initWithData:[data copy] encoding:NSUTF8StringEncoding];
+
 }
 
 #pragma mark -
-#pragma mark GCDAsyncSocketDelegate
+#pragma mark SKSocketDelegate
 
-- (void)socket:(GCDAsyncSocket *)sock
-   didReadData:(NSData *)data
-       withTag:(long)tag {
+- (void)socket:(SKSocket *)sock didReadDataWithData:(NSData *)data {
     serverActivity = CFAbsoluteTimeGetCurrent();
-    STOMPFrame *frame = [STOMPFrame STOMPFrameFromData:data];
+    STOMPFrame *frame = [STOMPFrame STOMPFrameFromDataString:[STOMPClient stringFromData:data]];
     [self receivedFrame:frame];
     [self readFrame];
 }
 
-- (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
+- (void)socket:(SKSocket *)sock didReadDataWithString:(NSString *)data {
+    serverActivity = CFAbsoluteTimeGetCurrent();
+    STOMPFrame *frame = [STOMPFrame STOMPFrameFromDataString:data];
+    [self receivedFrame:frame];
+    [self readFrame];
+}
+
+- (void)socket:(SKSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength {
     LogDebug(@"<<< PONG");
     serverActivity = CFAbsoluteTimeGetCurrent();
 }
 
-- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
-    [self readFrame];
+- (void)socket:(SKSocket *)sock didConnectToHost:(NSString *)aHost port:(uint16_t)aPort {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+        if (!connectHeaders[kHeaderHost]) {
+            connectHeaders[kHeaderHost] = host;
+        }
+        if (!connectHeaders[kHeaderHeartBeat]) {
+            connectHeaders[kHeaderHeartBeat] = self.clientHeartBeat;
+        } else {
+            self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
+        }
+        
+        [self sendFrameWithCommand:kCommandConnect
+                           headers:connectHeaders
+                              body: nil];
+        [self readFrame];
+    });
 }
 
-- (void)socketDidDisconnect:(GCDAsyncSocket *)sock
-                  withError:(NSError *)err {
+- (void)socketDidDisconnect:(SKSocket *)sock withError:(NSError *)err {
     LogDebug(@"socket did disconnect");
     if (!self.connected && self.connectionCompletionHandler) {
         self.connectionCompletionHandler(nil, err);

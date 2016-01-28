@@ -88,9 +88,10 @@ typedef void (^STOMPMessageHandler)(STOMPMessage *message);
 @property (nonatomic, copy) void (^errorHandler)(NSError *error);
 @property (nonatomic, assign) BOOL connected;
 
-- (id)initWithHost:(NSString *)theHost
-			  port:(NSUInteger)thePort;
+- (id)initWithHost:(NSString *)theHost;
+- (id)initWithHost:(NSString *)theHost andPort:(NSUInteger)thePort;
 
+- (void)connectWithCompletionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler;
 - (void)connectWithLogin:(NSString *)login
                 passcode:(NSString *)passcode
        completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler;
