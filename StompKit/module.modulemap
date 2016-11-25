@@ -1,0 +1,5 @@
+framework module StompKit {
+    umbrella header "StompKitFramework.h"
+        export *
+          module * { export * }
+}

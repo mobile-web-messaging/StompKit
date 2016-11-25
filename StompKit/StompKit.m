@@ -11,6 +11,7 @@
 
 #define kDefaultTimeout 5
 #define kVersion1_2 @"1.2"
+#define kVersion1_1 @"1.1"
 #define kNoHeartBeat @"0,0"
 
 #pragma mark Logging macros
@@ -132,7 +133,7 @@
             for (int i=0; i < [line length]; i++) {
                 unichar c = [line characterAtIndex:i];
                 if (c != '\x00') {
-                    [body appendString:[NSString stringWithFormat:@"%c", c]];
+                    [body appendString:[NSString stringWithFormat:@"%C", c]];
                 }
             }
 		} else {
@@ -311,6 +312,7 @@ CFAbsoluteTime serverActivity;
 
 - (id)initWithHost:(NSString *)aHost
               port:(NSUInteger)aPort {
+    self.useSSL = false;
     if(self = [super init]) {
         self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self
                                                  delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
@@ -333,6 +335,7 @@ CFAbsoluteTime serverActivity;
 
 - (void)connectWithHeaders:(NSDictionary *)headers
          completionHandler:(void (^)(STOMPFrame *connectedFrame, NSError *error))completionHandler {
+    self.connectHeaders = nil;
     self.connectionCompletionHandler = completionHandler;
 
     NSError *err;
@@ -341,9 +344,8 @@ CFAbsoluteTime serverActivity;
             self.connectionCompletionHandler(nil, err);
         }
     }
-
     NSMutableDictionary *connectHeaders = [[NSMutableDictionary alloc] initWithDictionary:headers];
-    connectHeaders[kHeaderAcceptVersion] = kVersion1_2;
+    connectHeaders[kHeaderAcceptVersion] = kVersion1_1;  // kVersion1_2; // version 1.1 (dgoon)
     if (!connectHeaders[kHeaderHost]) {
         connectHeaders[kHeaderHost] = host;
     }
@@ -353,9 +355,14 @@ CFAbsoluteTime serverActivity;
         self.clientHeartBeat = connectHeaders[kHeaderHeartBeat];
     }
 
-    [self sendFrameWithCommand:kCommandConnect
-                       headers:connectHeaders
-                          body: nil];
+    if (self.useSSL) {
+        self.connectHeaders =   connectHeaders;  // store for later use
+    }
+    else {
+        [self sendFrameWithCommand:kCommandConnect
+                           headers:connectHeaders
+                              body: nil];
+    }
 }
 
 - (void)sendTo:(NSString *)destination
@@ -481,6 +488,9 @@ CFAbsoluteTime serverActivity;
     NSInteger pingTTL = ceil(MAX(cx, sy) / 1000);
     NSInteger pongTTL = ceil(MAX(sx, cy) / 1000);
 
+    // disable heratbeat (dgoon)
+
+    return;
     LogDebug(@"send heart-beat every %ld seconds", pingTTL);
     LogDebug(@"expect to receive heart-beats every %ld seconds", pongTTL);
 
@@ -570,7 +580,13 @@ CFAbsoluteTime serverActivity;
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
-    [self readFrame];
+    if (self.useSSL) {
+        // socektDidSecure 에서 실제로 프레임 주고받기를 시작해야 한다
+        [sock startTLS:nil];
+    }
+    else {
+        [self readFrame];
+    }
 }
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock
@@ -586,6 +602,14 @@ CFAbsoluteTime serverActivity;
         }
     }
     self.connected = NO;
+}
+
+- (void)socketDidSecure:(GCDAsyncSocket *)sock {
+    assert(self.connectHeaders != Nil);
+    [self sendFrameWithCommand:kCommandConnect
+                       headers:self.connectHeaders
+                          body: nil];
+    [self readFrame];
 }
 
 @end
